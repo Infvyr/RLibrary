@@ -1,38 +1,36 @@
-// import { useMemo } from 'react';
-// import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { Container, Typography, useMediaQuery } from '@mui/material';
+import { useMemo } from "react";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { useMediaQuery, Grid } from "@mui/material";
+import { bgColorMode } from "./theme/colors";
+
+import { Appbar } from "./components";
 
 function App() {
-	// const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+    const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
-	// const theme = useMemo(
-	// 	() =>
-	// 		createTheme({
-	// 			palette: {
-	// 				mode: prefersDarkMode ? 'dark' : 'light',
-	// 			},
-	// 		}),
-	// 	[prefersDarkMode]
-	// );
+    const theme = useMemo(
+        () =>
+            createTheme({
+                palette: {
+                    mode: prefersDarkMode ? "dark" : "light",
+                },
+            }),
+        [prefersDarkMode]
+    );
 
-	return (
-		// <ThemeProvider theme={theme}>
-		<Container>
-			<Typography variant="h1" color="primary">
-				Vite + React
-			</Typography>
-			<Typography variant="h3" color="secondary">
-				Vite
-			</Typography>
-			<Typography variant="body1">
-				Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate
-				pariatur maxime harum officia asperiores laudantium quisquam deserunt
-				ullam? Dolorum eius voluptatibus non adipisci unde dicta neque voluptas
-				tempora blanditiis quidem.
-			</Typography>
-		</Container>
-		// </ThemeProvider>
-	);
+    return (
+        <ThemeProvider theme={theme}>
+            <Grid
+                container
+                sx={{
+                    minHeight: "inherit",
+                    bgcolor: bgColorMode,
+                }}
+            >
+                <Appbar />
+            </Grid>
+        </ThemeProvider>
+    );
 }
 
 export default App;
