@@ -23,7 +23,7 @@ const Appbar = () => {
 
     return (
         <Box>
-            <AppBar>
+            <AppBar color="default" sx={{ boxShadow: "none" }}>
                 <Toolbar>
                     <Typography variant="h5" sx={{ flexGrow: 1 }}>
                         RLibrary
@@ -37,8 +37,12 @@ const Appbar = () => {
                             color="inherit"
                             disableRipple
                             onClick={handleMenu}
+                            style={{ backgroundColor: "transparent" }}
                         >
                             <AccountCircle />
+                            <Typography variant="body1">
+                                &nbsp; Admin
+                            </Typography>
                         </IconButton>
                         <Menu
                             id="menu-appbar"

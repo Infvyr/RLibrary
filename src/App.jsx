@@ -1,9 +1,12 @@
 import { useMemo } from "react";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { useMediaQuery, Grid } from "@mui/material";
-import { bgColorMode } from "./theme/colors";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-import { Appbar } from "./components";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { useMediaQuery } from "@mui/material";
+
+import Dashboard from "./pages/Dashboard";
+import ErrorPage from "./pages/ErrorPage";
+import { Login, Register } from "./components";
 
 function App() {
     const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
@@ -20,15 +23,22 @@ function App() {
 
     return (
         <ThemeProvider theme={theme}>
-            <Grid
-                container
-                sx={{
-                    minHeight: "inherit",
-                    bgcolor: bgColorMode,
-                }}
-            >
-                <Appbar />
-            </Grid>
+            <Router>
+                <Switch>
+                    <Route path="/" exact>
+                        <Dashboard />
+                    </Route>
+                    <Route path="/login" exact>
+                        <Login />
+                    </Route>
+                    <Route path="/register" exact>
+                        <Register />
+                    </Route>
+                    <Route path="*" exact>
+                        <ErrorPage />
+                    </Route>
+                </Switch>
+            </Router>
         </ThemeProvider>
     );
 }
