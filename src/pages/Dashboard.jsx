@@ -1,12 +1,17 @@
-import { GridContainer, AuthSider, Register } from "../components";
+import { useState } from 'react';
+import { Register, Login } from '../components';
+import { GridContainer, Header, AuthSider } from '../components';
 
 const Dashboard = () => {
-    return (
-        <GridContainer>
-            <AuthSider />
-            <Register />
-        </GridContainer>
-    );
+	const [isLogged, setIsLogged] = useState(false);
+
+	return (
+		<GridContainer>
+			<Header isLogged={isLogged} setIsLogged={setIsLogged} />
+			<AuthSider isLogged={isLogged} />
+			{!isLogged ? <Register /> : <Login />}
+		</GridContainer>
+	);
 };
 
 export default Dashboard;

@@ -2,6 +2,10 @@ body {
     min-height: 100vh;
 }
 
+body[data-theme="dark"] a{
+    color: #fff;
+}
+
 #root {
     min-height: inherit;
 }
@@ -15,4 +19,8 @@ figure {
     margin: 0;
     display: flex;
     flex-wrap: wrap;
+}
+
+a{
+    text-decoration: none;
 }
