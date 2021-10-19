@@ -24,7 +24,7 @@ const Header = ({ isLogged, setIsLogged }) => {
         >
             <AuthSiderTitle
                 title="RLibrary"
-                variant="h3"
+                variant="h4"
                 styles={{ marginBottom: "auto" }}
             />
 

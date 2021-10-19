@@ -5,7 +5,6 @@ import { FormHeading, FormButtons, RegisterForm } from "..";
 const Register = () => {
     return (
         <Box
-            // maxWidth={{ maxWidth: "75%" }}
             sx={{
                 gridColumn: { xs: "span 12", md: "span 8" },
                 maxWidth: { xs: "100%", md: "75%" },

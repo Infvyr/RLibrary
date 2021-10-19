@@ -30,7 +30,7 @@ function FormHelperText() {
     // return <FormHelperText>{helperText}</FormHelperText>;
 }
 
-const RegisterForm = () => {
+const LoginForm = () => {
     const [values, setValues] = useState({
         password: "",
         showPassword: false,
@@ -59,18 +59,11 @@ const RegisterForm = () => {
             `}
         >
             <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12}>
                     <TextField
-                        label="First name"
-                        id="firstName"
-                        fullWidth
-                        required
-                    />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        label="Last name"
-                        id="lastName"
+                        type="email"
+                        label="Email address"
+                        id="email"
                         fullWidth
                         required
                     />
@@ -109,15 +102,6 @@ const RegisterForm = () => {
                     </FormControl>
                 </Grid>
                 <Grid item xs={12}>
-                    <TextField
-                        type="email"
-                        label="Email address"
-                        id="email"
-                        fullWidth
-                        required
-                    />
-                </Grid>
-                <Grid item xs={12}>
                     <Button
                         variant="contained"
                         size="large"
@@ -134,7 +118,7 @@ const RegisterForm = () => {
                             },
                         }}
                     >
-                        Register
+                        Login
                     </Button>
                 </Grid>
             </Grid>
@@ -142,4 +126,4 @@ const RegisterForm = () => {
     );
 };
 
-export default RegisterForm;
+export default LoginForm;
