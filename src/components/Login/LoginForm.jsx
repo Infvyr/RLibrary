@@ -12,6 +12,7 @@ import {
 	OutlinedInput,
 	TextField,
 } from '@mui/material';
+import { ResetPassword } from '..';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import {
@@ -78,6 +79,7 @@ const LoginForm = () => {
 					</FormControl>
 				</Grid>
 				<Grid item xs={12}>
+					<ResetPassword />
 					<Button
 						variant="contained"
 						size="large"
