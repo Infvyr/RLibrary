@@ -24,3 +24,7 @@ figure {
 a{
     text-decoration: none;
 }
+
+.Mui-required[data-shrink="true"] .MuiInputLabel-asterisk{
+    color: red;
+}
