@@ -1,7 +1,4 @@
-/* eslint-disable react/react-in-jsx-scope -- Unaware of jsxImportSource */
-/** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
 	Button,
 	FormControl,
@@ -14,16 +11,36 @@ import {
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+
 import {
 	btnSuccessBgColorMode,
 	btnSuccesHoverBgColorMode,
 } from '../../theme/colors';
+
+import { useAuth } from '../../contexts/AuthContext';
 
 const RegisterForm = () => {
 	const [values, setValues] = useState({
 		password: '',
 		showPassword: false,
 	});
+
+	const firstNameRef = useRef();
+	const lastNameRef = useRef();
+	const passwordRef = useRef();
+	const emailRef = useRef();
+
+	const { signUp } = useAuth();
+
+	function handleSubmit(e) {
+		e.preventDefault();
+		signUp(
+			firstNameRef.current.value,
+			lastNameRef.current.value,
+			passwordRef.current.value,
+			emailRef.current.value
+		);
+	}
 
 	const handleChange = prop => event => {
 		setValues({ ...values, [prop]: event.target.value });
@@ -44,10 +61,22 @@ const RegisterForm = () => {
 		<form autoComplete="off">
 			<Grid container spacing={2}>
 				<Grid item xs={12} sm={6}>
-					<TextField label="First name" id="firstName" fullWidth required />
+					<TextField
+						label="First name"
+						id="firstName"
+						fullWidth
+						required
+						ref={firstNameRef}
+					/>
 				</Grid>
 				<Grid item xs={12} sm={6}>
-					<TextField label="Last name" id="lastName" fullWidth required />
+					<TextField
+						label="Last name"
+						id="lastName"
+						fullWidth
+						required
+						ref={lastNameRef}
+					/>
 				</Grid>
 				<Grid item xs={12}>
 					<FormControl variant="outlined" fullWidth>
@@ -59,6 +88,7 @@ const RegisterForm = () => {
 							type={values.showPassword ? 'text' : 'password'}
 							value={values.password}
 							onChange={handleChange('password')}
+							ref={passwordRef}
 							endAdornment={
 								<InputAdornment position="end">
 									<IconButton
@@ -81,6 +111,7 @@ const RegisterForm = () => {
 						id="email"
 						fullWidth
 						required
+						ref={emailRef}
 					/>
 				</Grid>
 				<Grid item xs={12}>

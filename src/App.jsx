@@ -1,5 +1,6 @@
 import { useMemo, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useMediaQuery } from '@mui/material';
@@ -29,22 +30,24 @@ function App() {
 	}, [prefersDarkMode]);
 
 	return (
-		<ThemeProvider theme={theme}>
-			<Router>
-				<Switch>
-					<Route path="/" exact>
-						<Dashboard />
-					</Route>
-					<Route path="/reset-password" exact>
-						<ResetPassword />
-					</Route>
+		<AuthProvider>
+			<ThemeProvider theme={theme}>
+				<Router>
+					<Switch>
+						<Route path="/" exact>
+							<Dashboard />
+						</Route>
+						<Route path="/reset-password" exact>
+							<ResetPassword />
+						</Route>
 
-					<Route path="*" exact>
-						<ErrorPage />
-					</Route>
-				</Switch>
-			</Router>
-		</ThemeProvider>
+						<Route path="*" exact>
+							<ErrorPage />
+						</Route>
+					</Switch>
+				</Router>
+			</ThemeProvider>
+		</AuthProvider>
 	);
 }
 
