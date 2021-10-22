@@ -1,164 +1,193 @@
-import { useState, useRef } from 'react';
+import { useState } from "react";
+import { createUserWithEmailAndPassword } from "@firebase/auth";
+import { auth, db } from "../../firebase/utils";
 import {
-	Alert,
-	AlertTitle,
-	Button,
-	FormControl,
-	Grid,
-	IconButton,
-	InputAdornment,
-	InputLabel,
-	OutlinedInput,
-	TextField,
-} from '@mui/material';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+    Alert,
+    AlertTitle,
+    Button,
+    FormControl,
+    Grid,
+    IconButton,
+    InputAdornment,
+    InputLabel,
+    OutlinedInput,
+    TextField,
+} from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import {
-	btnSuccessBgColorMode,
-	btnSuccesHoverBgColorMode,
-} from '../../theme/colors';
+    btnSuccessBgColorMode,
+    btnSuccesHoverBgColorMode,
+} from "../../theme/colors";
+import { RegisterFirstName, RegisterLastName } from "..";
 
-import { useAuth } from '../../contexts/AuthContext';
+// import { collection, getDocs } from "firebase/firestore";
 
 const RegisterForm = () => {
-	const [values, setValues] = useState({
-		password: '',
-		showPassword: false,
-	});
+    const [values, setValues] = useState({
+        password: "",
+        showPassword: false,
+        email: "",
+        firstName: "",
+        lastName: "",
+    });
 
-	const firstNameRef = useRef();
-	const lastNameRef = useRef();
-	const passwordRef = useRef();
-	const emailRef = useRef();
+    const [error, setError] = useState("");
 
-	const { signUp, currentUser } = useAuth();
+    // const [registerFirstName, setRegisterFirstName] = useState("");
+    // const [registerLastName, setRegisterLastName] = useState("");
+    // const [registerEmail, setRegisterEmail] = useState("");
 
-	const [error, setError] = useState('');
-	const [loading, setLoading] = useState(false);
+    // const [users, setUsers] = useState([]);
+    // const usersCollectionRef = collection(db, "users");
 
-	async function handleSubmit(e) {
-		e.preventDefault();
+    // useEffect(() => {
+    //     const getUsers = async () => {
+    //         const data = await getDocs(usersCollectionRef);
+    //         setUsers(data.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+    //     };
+    //     getUsers();
+    // }, []);
 
-		try {
-			setError('');
-			setLoading(true);
-			await signUp(
-				firstNameRef.current.value,
-				lastNameRef.current.value,
-				passwordRef.current.value,
-				emailRef.current.value
-			);
-		} catch (error) {
-			setError('Failed to create an account');
-		}
-	}
+    // console.log(`GetUsers from Firestore: ${JSON.stringify(users)}`);
 
-	const handleChange = prop => event => {
-		setValues({ ...values, [prop]: event.target.value });
-	};
+    async function registerUser(e) {
+        e.preventDefault();
 
-	const handleClickShowPassword = () => {
-		setValues({
-			...values,
-			showPassword: !values.showPassword,
-		});
-	};
+        try {
+            if (
+                values.email.length ||
+                values.password > 6 ||
+                values.firstName > 2 ||
+                values.lastName > 2
+            ) {
+                const user = await createUserWithEmailAndPassword(
+                    auth,
+                    values.email,
+                    values.password
+                );
 
-	const handleMouseDownPassword = event => {
-		event.preventDefault();
-	};
+                setValues({
+                    password: "",
+                    showPassword: false,
+                    email: "",
+                    firstName: "",
+                    lastName: "",
+                });
+                console.log(user);
+            } else {
+                setError("All fields are required!");
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
 
-	return (
-		<>
-			{JSON.stringify(currentUser)}
-			{error && (
-				<Alert severity="error" sx={{ mb: 4 }}>
-					<AlertTitle>Error</AlertTitle>
-					{error}
-				</Alert>
-			)}
-			<form autoComplete="off" onSubmit={handleSubmit}>
-				<Grid container spacing={2}>
-					<Grid item xs={12} sm={6}>
-						<TextField
-							label="First name"
-							id="firstName"
-							fullWidth
-							required
-							ref={firstNameRef}
-						/>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<TextField
-							label="Last name"
-							id="lastName"
-							fullWidth
-							required
-							ref={lastNameRef}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<FormControl variant="outlined" fullWidth>
-							<InputLabel htmlFor="outlined-adornment-password" required>
-								Password
-							</InputLabel>
-							<OutlinedInput
-								id="outlined-adornment-password"
-								type={values.showPassword ? 'text' : 'password'}
-								value={values.password}
-								onChange={handleChange('password')}
-								ref={passwordRef}
-								endAdornment={
-									<InputAdornment position="end">
-										<IconButton
-											aria-label="toggle password visibility"
-											onClick={handleClickShowPassword}
-											onMouseDown={handleMouseDownPassword}
-											edge="end">
-											{values.showPassword ? <VisibilityOff /> : <Visibility />}
-										</IconButton>
-									</InputAdornment>
-								}
-								label="Password"
-							/>
-						</FormControl>
-					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							type="email"
-							label="Email address"
-							id="email"
-							fullWidth
-							required
-							ref={emailRef}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<Button
-							type="submit"
-							variant="contained"
-							size="large"
-							disabled={loading}
-							fullWidth
-							disableRipple
-							sx={{
-								color: '#fff',
-								backgroundColor: btnSuccessBgColorMode,
-								textTransform: 'capitalize',
-								minHeight: '56px',
+    const handleRegisterInput =
+        prop =>
+        ({ target }) =>
+            setValues({
+                ...values,
+                [prop]: target.value,
+            });
 
-								':hover': {
-									backgroundColor: btnSuccesHoverBgColorMode,
-								},
-							}}>
-							Register
-						</Button>
-					</Grid>
-				</Grid>
-			</form>
-		</>
-	);
+    const handleClickShowPassword = () => {
+        setValues({
+            ...values,
+            showPassword: !values.showPassword,
+        });
+    };
+
+    const handleMouseDownPassword = event => {
+        event.preventDefault();
+    };
+
+    return (
+        <>
+            {error && (
+                <Alert severity="error" sx={{ mb: 4 }}>
+                    <AlertTitle>Error</AlertTitle>
+                    {error}
+                </Alert>
+            )}
+            <Grid container spacing={2}>
+                <RegisterFirstName
+                    value={values.firstName}
+                    onChange={handleRegisterInput("firstName")}
+                />
+                <RegisterLastName
+                    value={values.lastName}
+                    onChange={handleRegisterInput("lastName")}
+                />
+                <Grid item xs={12}>
+                    <FormControl variant="outlined" fullWidth>
+                        <InputLabel
+                            htmlFor="outlined-adornment-password"
+                            required
+                        >
+                            Password
+                        </InputLabel>
+                        <OutlinedInput
+                            id="outlined-adornment-password"
+                            type={values.showPassword ? "text" : "password"}
+                            value={values.password}
+                            onChange={handleRegisterInput("password")}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}
+                                        edge="end"
+                                    >
+                                        {values.showPassword ? (
+                                            <VisibilityOff />
+                                        ) : (
+                                            <Visibility />
+                                        )}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                            label="Password"
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        type="email"
+                        label="Email address"
+                        id="email"
+                        fullWidth
+                        required
+                        value={values.email}
+                        onChange={handleRegisterInput("email")}
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <Button
+                        variant="contained"
+                        size="large"
+                        fullWidth
+                        disableRipple
+                        sx={{
+                            color: "#fff",
+                            backgroundColor: btnSuccessBgColorMode,
+                            textTransform: "capitalize",
+                            minHeight: "56px",
+
+                            ":hover": {
+                                backgroundColor: btnSuccesHoverBgColorMode,
+                            },
+                        }}
+                        onClick={registerUser}
+                    >
+                        Register
+                    </Button>
+                </Grid>
+            </Grid>
+        </>
+    );
 };
 
 export default RegisterForm;
