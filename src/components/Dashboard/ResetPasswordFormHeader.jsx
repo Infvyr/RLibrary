@@ -1,10 +1,16 @@
-import { Button, Grid, Link, TextField, Typography } from '@mui/material';
+/* eslint-disable react/react-in-jsx-scope -- Unaware of jsxImportSource */
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
+import { Button, Grid, TextField, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import {
 	btnSuccesHoverBgColorMode,
 	btnSuccessBgColorMode,
 } from '../../theme/colors';
 
 const ResetPasswordFormHeader = () => {
+	const navigate = useNavigate();
+
 	return (
 		<Grid
 			container
@@ -41,19 +47,23 @@ const ResetPasswordFormHeader = () => {
 				Reset password
 			</Button>
 			<Button
-				href="/"
 				variant="text"
 				fullWidth
 				disableRipple
-				sx={{
-					backgroundColor: 'transparent',
-					textTransform: 'capitalize',
-					minHeight: '56px',
+				onClick={() => navigate('/', { replace: true })}
+				css={css`
+					min-height: 56px;
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					width: 100%;
+					text-transform: capitalize;
+					transition: background-color 300ms ease;
 
-					':hover': {
-						backgroundColor: 'rgba(0, 171, 85, 0.08)',
-					},
-				}}>
+					&:hover {
+						background-color: rgba(0, 171, 85, 0.08);
+					}
+				`}>
 				Back
 			</Button>
 		</Grid>

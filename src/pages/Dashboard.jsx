@@ -3,13 +3,16 @@ import { Register, Login } from '../components';
 import { GridContainer, Header, AuthSider } from '../components';
 
 const Dashboard = () => {
-	const [isLogged, setIsLogged] = useState(false);
+	const [isActiveLoginComponent, setIsActiveLoginComponent] = useState(false);
 
 	return (
 		<GridContainer>
-			<Header isLogged={isLogged} setIsLogged={setIsLogged} />
-			<AuthSider isLogged={isLogged} />
-			{!isLogged ? <Register /> : <Login />}
+			<Header
+				isActiveLoginComponent={isActiveLoginComponent}
+				setIsActiveLoginComponent={setIsActiveLoginComponent}
+			/>
+			<AuthSider isActiveLoginComponent={isActiveLoginComponent} />
+			{!isActiveLoginComponent ? <Register /> : <Login />}
 		</GridContainer>
 	);
 };

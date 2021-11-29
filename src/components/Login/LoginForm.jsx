@@ -1,105 +1,72 @@
-/* eslint-disable react/react-in-jsx-scope -- Unaware of jsxImportSource */
-/** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
 import { useState } from 'react';
-import {
-	Button,
-	FormControl,
-	Grid,
-	IconButton,
-	InputAdornment,
-	InputLabel,
-	OutlinedInput,
-	TextField,
-} from '@mui/material';
-import { ResetPassword } from '..';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import {
-	btnSuccessBgColorMode,
-	btnSuccesHoverBgColorMode,
-} from '../../theme/colors';
+import { useNavigate } from 'react-router-dom';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { Alert, Grid, Snackbar } from '@mui/material';
+import { EmailField, PasswordField, SubmitButton, ResetPassword } from '../';
 
 const LoginForm = () => {
-	const [values, setValues] = useState({
+	const [user, setUser] = useState({
+		name: '',
+		email: '',
 		password: '',
-		showPassword: false,
 	});
+	const [signInError, setSignInError] = useState({
+		message: '',
+		isActive: false,
+	});
+	const navigate = useNavigate();
 
 	const handleChange = prop => event => {
-		setValues({ ...values, [prop]: event.target.value });
+		setUser({ ...user, [prop]: event.target.value });
 	};
 
-	const handleClickShowPassword = () => {
-		setValues({
-			...values,
-			showPassword: !values.showPassword,
-		});
+	const handleLogin = (email, password) => {
+		const auth = getAuth();
+
+		signInWithEmailAndPassword(auth, email, password)
+			.then(() => navigate('/application', { replace: true }))
+			.catch(signInError => {
+				if (signInError) {
+					console.error("Provided email or password doesn't match");
+					setSignInError({
+						message: "Provided email or password doesn't match",
+						isActive: true,
+					});
+				}
+			});
 	};
 
-	const handleMouseDownPassword = event => {
-		event.preventDefault();
+	const handleErrorClose = (event, reason) => {
+		if (reason === 'clickaway') return;
+		setSignInError({ ...signInError, isActive: false });
 	};
 
 	return (
-		<form autoComplete="off">
-			<Grid container spacing={2}>
-				<Grid item xs={12}>
-					<TextField
-						type="email"
-						label="Email address"
-						id="email"
-						fullWidth
-						required
-					/>
-				</Grid>
-				<Grid item xs={12}>
-					<FormControl variant="outlined" fullWidth>
-						<InputLabel htmlFor="outlined-adornment-password" required>
-							Password
-						</InputLabel>
-						<OutlinedInput
-							id="outlined-adornment-password"
-							type={values.showPassword ? 'text' : 'password'}
-							value={values.password}
-							onChange={handleChange('password')}
-							endAdornment={
-								<InputAdornment position="end">
-									<IconButton
-										aria-label="toggle password visibility"
-										onClick={handleClickShowPassword}
-										onMouseDown={handleMouseDownPassword}
-										edge="end">
-										{values.showPassword ? <VisibilityOff /> : <Visibility />}
-									</IconButton>
-								</InputAdornment>
-							}
-							label="Password"
-						/>
-					</FormControl>
-				</Grid>
-				<Grid item xs={12}>
-					<ResetPassword />
-					<Button
-						variant="contained"
-						size="large"
-						fullWidth
-						disableRipple
-						sx={{
-							color: '#fff',
-							backgroundColor: btnSuccessBgColorMode,
-							textTransform: 'capitalize',
-							minHeight: '56px',
-
-							':hover': {
-								backgroundColor: btnSuccesHoverBgColorMode,
-							},
-						}}>
-						Login
-					</Button>
-				</Grid>
+		<Grid container spacing={2}>
+			<EmailField email={user.email} handleChange={handleChange('email')} />
+			<PasswordField
+				password={user.password}
+				handleChange={handleChange('password')}
+			/>
+			<Grid item xs={12}>
+				<ResetPassword />
+				<SubmitButton
+					btnTitle="Sign in"
+					handleClick={e => {
+						e.preventDefault();
+						handleLogin(user.email, user.password);
+					}}
+				/>
 			</Grid>
-		</form>
+			<Snackbar
+				open={signInError.isActive}
+				autoHideDuration={6000}
+				onClose={handleErrorClose}>
+				<Alert onClose={handleErrorClose} severity="error">
+					{signInError.message}
+				</Alert>
+			</Snackbar>
+		</Grid>
 	);
 };
 

@@ -1,9 +1,16 @@
 import { useState } from 'react';
-import { Checkbox, FormControlLabel, FormGroup, Grid } from '@mui/material';
-import { Link } from 'react-router-dom';
+import {
+	Checkbox,
+	FormControlLabel,
+	FormGroup,
+	Grid,
+	Typography,
+} from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ResetPassword = () => {
 	const [checked, setChecked] = useState(false);
+	const navigate = useNavigate();
 
 	const handleChange = event => {
 		setChecked(event.target.checked);
@@ -11,7 +18,7 @@ const ResetPassword = () => {
 
 	return (
 		<Grid container spacing={2} sx={{ mt: '-5px', mb: 3 }}>
-			<Grid item xs={6}>
+			{/* <Grid item xs={6}>
 				<FormGroup>
 					<FormControlLabel
 						control={
@@ -25,9 +32,14 @@ const ResetPassword = () => {
 						label="Remember me"
 					/>
 				</FormGroup>
-			</Grid>
-			<Grid item xs={6} textAlign="right">
-				<Link to="/reset-password">Forgot password?</Link>
+			</Grid> */}
+			<Grid item xs={12} textAlign="right">
+				<Typography
+					variant="body1"
+					sx={{ cursor: 'pointer', display: 'inline-block' }}
+					onClick={() => navigate('/reset-password', { replace: true })}>
+					Forgot password?
+				</Typography>
 			</Grid>
 		</Grid>
 	);
