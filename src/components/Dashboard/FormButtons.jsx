@@ -4,6 +4,9 @@ import { css } from '@emotion/react';
 import { Button, createSvgIcon } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 
+import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+
 const FacebookIcon = createSvgIcon(
 	<path
 		fill="currentColor"
@@ -13,6 +16,9 @@ const FacebookIcon = createSvgIcon(
 );
 
 const FormButtons = () => {
+	const { signInWithGoogle } = useAuth();
+	const navigate = useNavigate();
+
 	return (
 		<div
 			css={css`
@@ -28,7 +34,15 @@ const FormButtons = () => {
 					borderColor: 'rgba(145, 158, 171, 0.32)',
 					minWidth: '125px',
 					minHeight: '56px',
-				}}>
+				}}
+				onClick={() =>
+					signInWithGoogle()
+						.then(user => {
+							navigate('/application', { replace: true });
+							console.log(user);
+						})
+						.catch(error => console.error(error))
+				}>
 				<GoogleIcon size="small" sx={{ color: '#DB4437' }} />
 			</Button>
 			<Button

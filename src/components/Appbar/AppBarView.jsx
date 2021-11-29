@@ -10,6 +10,7 @@ import {
 	Menu,
 	MenuItem,
 	Chip,
+	Avatar,
 } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 
@@ -26,7 +27,7 @@ const AppBarView = () => {
 
 		signOut(auth)
 			.then(() => navigate('/', { replace: true }))
-			.catch(console.log);
+			.catch(error => console.error(error));
 	};
 
 	return (
@@ -40,7 +41,13 @@ const AppBarView = () => {
 				</Typography>
 				<>
 					<Chip
-						avatar={<AccountCircle />}
+						avatar={
+							currentUser.photoURL !== null ? (
+								<Avatar src={currentUser.photoURL} />
+							) : (
+								<AccountCircle />
+							)
+						}
 						label={currentUser.displayName}
 						onClick={handleMenu}
 						sx={{ bgcolor: 'transparent' }}
