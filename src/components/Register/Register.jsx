@@ -1,4 +1,4 @@
-import { Box, Divider, Typography, Snackbar, Alert } from '@mui/material';
+import { Box, Divider, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { FormHeading, FormButtons, RegisterForm } from '..';
 
@@ -8,6 +8,7 @@ const Register = () => {
 			sx={{
 				gridColumn: { xs: 'span 12', md: 'span 8' },
 				maxWidth: { xs: '100%', md: '540px' },
+				width: '100%',
 				p: 3,
 				mt: 2,
 				mb: 2,

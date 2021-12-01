@@ -1,30 +1,28 @@
 import { Grid, TextField } from '@mui/material';
-import { useTextError } from '../../../hooks/useError';
 
-const inputProps = {
-	pattern: '[A-Za-z]*',
-	minLength: 2,
-};
-
-const RegisterName = ({ name, handleChange }) => {
-	const [isError, helperText, setError] = useTextError();
-
-	return (
-		<Grid item xs={12}>
-			<TextField
-				id="name"
-				label="Name"
-				value={name}
-				inputProps={inputProps}
-				onChange={handleChange}
-				onInput={setError}
-				error={isError}
-				helperText={helperText}
-				fullWidth
-				required
-			/>
-		</Grid>
-	);
-};
+const RegisterName = ({ name, handleChange, register, errors }) => (
+	<Grid item xs={12}>
+		<TextField
+			{...register('name', {
+				required: 'Please fill in this required field!',
+				pattern: {
+					value: /^[A-Za-z]+$/i,
+					message: 'The name must contain only letters',
+				},
+				minLength: {
+					value: 2,
+					message: 'The name must be at least 2 characters long!',
+				},
+			})}
+			label="Name"
+			value={name}
+			onChange={handleChange}
+			error={errors?.name ? true : false}
+			helperText={errors?.name && errors?.name?.message}
+			fullWidth
+			required
+		/>
+	</Grid>
+);
 
 export default RegisterName;

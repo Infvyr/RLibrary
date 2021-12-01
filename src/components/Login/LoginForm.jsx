@@ -1,6 +1,12 @@
+/* eslint-disable react/react-in-jsx-scope -- Unaware of jsxImportSource */
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { useForm } from 'react-hook-form';
+
 import { Alert, Grid, Snackbar } from '@mui/material';
 import { EmailField, PasswordField, SubmitButton, ResetPassword } from '../';
 
@@ -15,15 +21,18 @@ const LoginForm = () => {
 		isActive: false,
 	});
 	const navigate = useNavigate();
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, isValid },
+	} = useForm({
+		mode: 'onBlur',
+	});
 
-	const handleChange = prop => event => {
-		setUser({ ...user, [prop]: event.target.value });
-	};
-
-	const handleLogin = (email, password) => {
+	const onSubmit = data => {
 		const auth = getAuth();
 
-		signInWithEmailAndPassword(auth, email, password)
+		signInWithEmailAndPassword(auth, data.email, data.password)
 			.then(() => navigate('/view', { replace: true }))
 			.catch(signInError => {
 				if (signInError) {
@@ -36,6 +45,10 @@ const LoginForm = () => {
 			});
 	};
 
+	const handleChange = prop => event => {
+		setUser({ ...user, [prop]: event.target.value });
+	};
+
 	const handleErrorClose = (event, reason) => {
 		if (reason === 'clickaway') return;
 		setSignInError({ ...signInError, isActive: false });
@@ -43,21 +56,30 @@ const LoginForm = () => {
 
 	return (
 		<Grid container spacing={2}>
-			<EmailField email={user.email} handleChange={handleChange('email')} />
-			<PasswordField
-				password={user.password}
-				handleChange={handleChange('password')}
-			/>
 			<Grid item xs={12}>
-				<ResetPassword />
-				<SubmitButton
-					btnTitle="Sign in"
-					handleClick={e => {
-						e.preventDefault();
-						handleLogin(user.email, user.password);
-					}}
-				/>
+				<form
+					onSubmit={handleSubmit(onSubmit)}
+					css={css`
+						display: flex;
+						flex-direction: column;
+						gap: 1em;
+					`}>
+					<EmailField
+						email={user.email}
+						handleChange={handleChange('email')}
+						register={register}
+						errors={errors}
+					/>
+					<PasswordField
+						password={user.password}
+						handleChange={handleChange('password')}
+						register={register}
+						errors={errors}
+					/>
+					<SubmitButton btnTitle="Sign up" isValid={isValid} />
+				</form>
 			</Grid>
+
 			<Snackbar
 				open={signInError.isActive}
 				autoHideDuration={6000}

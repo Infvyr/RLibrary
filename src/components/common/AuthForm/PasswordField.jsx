@@ -10,16 +10,11 @@ import {
 	OutlinedInput,
 	Typography,
 } from '@mui/material';
-import { usePasswordError } from '../../../hooks/useError';
 import { red } from '@mui/material/colors';
 
-const inputProps = {
-	minLength: 6,
-};
-
-const PasswordField = ({ password, handleChange }) => {
+const PasswordField = ({ password, handleChange, register, errors }) => {
+	const minLength = 6;
 	const [showPassword, setShowPassword] = useState('');
-	const [isError, helperText, setError] = usePasswordError();
 
 	const handleClickShowPassword = () => setShowPassword(!showPassword);
 	const handleMouseDownPassword = event => event.preventDefault();
@@ -27,11 +22,17 @@ const PasswordField = ({ password, handleChange }) => {
 	return (
 		<Grid item xs={12}>
 			<FormControl variant="outlined" fullWidth>
-				<InputLabel htmlFor="outlined-adornment-password" required>
+				<InputLabel htmlFor="password" required>
 					Password
 				</InputLabel>
 				<OutlinedInput
-					id="outlined-adornment-password"
+					{...register('password', {
+						required: 'This field is required!',
+						minLength: {
+							value: minLength,
+							message: `Password must have at least ${minLength} characters`,
+						},
+					})}
 					type={showPassword ? 'text' : 'password'}
 					endAdornment={
 						<InputAdornment position="end">
@@ -46,24 +47,20 @@ const PasswordField = ({ password, handleChange }) => {
 					}
 					label="Password"
 					value={password}
-					inputProps={inputProps}
-					onInput={setError}
-					error={isError}
 					onChange={handleChange}
+					error={errors?.password ? true : false}
 				/>
-				{isError && (
-					<Typography
-						variant="caption"
-						component="p"
-						sx={{
-							marginTop: '3px',
-							marginRight: '14px',
-							marginLeft: '14px',
-							color: red[500],
-						}}>
-						{helperText}
-					</Typography>
-				)}
+				<Typography
+					variant="caption"
+					component="p"
+					sx={{
+						marginTop: '3px',
+						marginRight: '14px',
+						marginLeft: '14px',
+						color: red[500],
+					}}>
+					{errors?.password && errors?.password?.message}
+				</Typography>
 			</FormControl>
 		</Grid>
 	);

@@ -1,25 +1,21 @@
 import { Grid, TextField } from '@mui/material';
-import { useEmailError } from '../../../hooks/useError';
 
-const EmailField = ({ email, handleChange }) => {
-	const [isError, helperText, setError] = useEmailError();
-
-	return (
-		<Grid item xs={12}>
-			<TextField
-				id="email"
-				type="email"
-				label="Email address"
-				value={email}
-				onChange={handleChange}
-				onInput={setError}
-				error={isError}
-				helperText={helperText}
-				fullWidth
-				required
-			/>
-		</Grid>
-	);
-};
+const EmailField = ({ email, handleChange, register, errors }) => (
+	<Grid item xs={12}>
+		<TextField
+			{...register('email', {
+				required: 'Please fill in this required field!',
+			})}
+			type="email"
+			label="Email address"
+			value={email}
+			onChange={handleChange}
+			error={errors?.email ? true : false}
+			helperText={errors?.email && errors?.email?.message}
+			fullWidth
+			required
+		/>
+	</Grid>
+);
 
 export default EmailField;

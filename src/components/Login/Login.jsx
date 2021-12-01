@@ -7,6 +7,7 @@ const Login = () => (
 		sx={{
 			gridColumn: { xs: 'span 12', md: 'span 8' },
 			maxWidth: { xs: '100%', md: '540px' },
+			width: '100%',
 			p: 3,
 			mt: 2,
 			mb: 2,

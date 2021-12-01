@@ -4,7 +4,7 @@ import {
 	btnSuccesHoverBgColorMode,
 } from '../../../theme/colors';
 
-const SubmitButton = ({ btnTitle = 'Submit', handleClick }) => (
+const SubmitButton = ({ btnTitle = 'Submit', isValid }) => (
 	<Grid item xs={12}>
 		<Button
 			type="submit"
@@ -12,7 +12,7 @@ const SubmitButton = ({ btnTitle = 'Submit', handleClick }) => (
 			size="large"
 			fullWidth
 			disableRipple
-			onClick={handleClick}
+			disabled={!isValid}
 			sx={{
 				color: '#fff',
 				backgroundColor: btnSuccessBgColorMode,
