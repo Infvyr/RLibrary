@@ -15,9 +15,9 @@ import {
 import AccountCircle from '@mui/icons-material/AccountCircle';
 
 const AppBarView = () => {
+	const { currentUser } = useAuth();
 	const [anchorEl, setAnchorEl] = useState(null);
 	const navigate = useNavigate();
-	const { currentUser } = useAuth();
 
 	const handleMenu = event => setAnchorEl(event.currentTarget);
 	const handleClose = () => setAnchorEl(null);
@@ -42,10 +42,10 @@ const AppBarView = () => {
 				<>
 					<Chip
 						avatar={
-							currentUser.photoURL !== null ? (
-								<Avatar src={currentUser.photoURL} />
-							) : (
+							currentUser.photoURL === null ? (
 								<AccountCircle />
+							) : (
+								<Avatar src={currentUser.photoURL} />
 							)
 						}
 						label={currentUser.displayName}

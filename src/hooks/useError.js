@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import stringContainsNumber from '../helpers/functions';
+import { stringContainsNumber } from '../helpers/functions';
 
 export const useTextError = () => {
 	const [isError, setIsError] = useState(false);

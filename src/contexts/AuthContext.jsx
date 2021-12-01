@@ -24,11 +24,11 @@ export function AuthProvider({ children }) {
 			const { displayName, email, uid, accessToken, photoURL } = user;
 
 			setCurrentUser({
+				accessToken,
 				displayName,
 				email,
-				uid,
-				accessToken,
 				photoURL,
+				uid,
 			});
 
 			console.log('Auth Context:');
@@ -36,17 +36,15 @@ export function AuthProvider({ children }) {
 		} else {
 			// User is signed out
 			setCurrentUser({});
-			console.log('Signed out');
 		}
 	};
 
 	useEffect(() => {
-		const authSubscriber = onAuthStateChanged(
-			getAuth(),
-			handleUserStateChanges
-		);
+		const unsubscribe = onAuthStateChanged(getAuth(), handleUserStateChanges);
 
-		return authSubscriber;
+		return () => {
+			unsubscribe();
+		};
 	}, []);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

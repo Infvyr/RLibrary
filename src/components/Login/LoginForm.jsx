@@ -24,7 +24,7 @@ const LoginForm = () => {
 		const auth = getAuth();
 
 		signInWithEmailAndPassword(auth, email, password)
-			.then(() => navigate('/application', { replace: true }))
+			.then(() => navigate('/view', { replace: true }))
 			.catch(signInError => {
 				if (signInError) {
 					console.error("Provided email or password doesn't match");
