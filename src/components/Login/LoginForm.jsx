@@ -4,7 +4,9 @@ import { css } from '@emotion/react';
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+// import { getAuth } from 'firebase/auth';
+import { useAuth } from '../../contexts/AuthContext';
+
 import { useForm } from 'react-hook-form';
 
 import { Alert, Grid, Snackbar } from '@mui/material';
@@ -20,7 +22,6 @@ const LoginForm = () => {
 		message: '',
 		isActive: false,
 	});
-	const navigate = useNavigate();
 	const {
 		register,
 		handleSubmit,
@@ -28,22 +29,26 @@ const LoginForm = () => {
 	} = useForm({
 		mode: 'onBlur',
 	});
+	const { signInUser } = useAuth();
+	const navigate = useNavigate();
 
-	const onSubmit = data => {
-		const auth = getAuth();
-
-		signInWithEmailAndPassword(auth, data.email, data.password)
-			.then(() => navigate('/view', { replace: true }))
+	const onSubmit = data =>
+		signInUser(data.email, data.password)
+			.then(() => {
+				navigate('/view', { replace: true });
+			})
 			.catch(signInError => {
 				if (signInError) {
-					console.error("Provided email or password doesn't match");
+					console.error(
+						"Provided email or password doesn't match or ",
+						signInError
+					);
 					setSignInError({
 						message: "Provided email or password doesn't match",
 						isActive: true,
 					});
 				}
 			});
-	};
 
 	const handleChange = prop => event => {
 		setUser({ ...user, [prop]: event.target.value });

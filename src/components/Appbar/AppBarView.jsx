@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAuth, signOut } from 'firebase/auth';
+// import { getAuth } from 'firebase/auth';
 import { useAuth } from '../../contexts/AuthContext';
 
 import {
@@ -15,20 +15,17 @@ import {
 import AccountCircle from '@mui/icons-material/AccountCircle';
 
 const AppBarView = () => {
-	const { currentUser } = useAuth();
+	const { currentUser, signOutUser } = useAuth();
 	const [anchorEl, setAnchorEl] = useState(null);
 	const navigate = useNavigate();
 
 	const handleMenu = event => setAnchorEl(event.currentTarget);
 	const handleClose = () => setAnchorEl(null);
 
-	const signout = () => {
-		const auth = getAuth();
-
-		signOut(auth)
+	const signout = () =>
+		signOutUser()
 			.then(() => navigate('/', { replace: true }))
 			.catch(error => console.error(error));
-	};
 
 	return (
 		<AppBar position="static">
@@ -42,13 +39,13 @@ const AppBarView = () => {
 				<>
 					<Chip
 						avatar={
-							currentUser.photoURL === null ? (
+							currentUser?.photoURL === null ? (
 								<AccountCircle />
 							) : (
-								<Avatar src={currentUser.photoURL} />
+								<Avatar src={currentUser?.photoURL} />
 							)
 						}
-						label={currentUser.displayName}
+						label={currentUser?.displayName}
 						onClick={handleMenu}
 						sx={{ bgcolor: 'transparent' }}
 					/>

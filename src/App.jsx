@@ -4,11 +4,9 @@ import {
 	Routes,
 	Route,
 	Navigate,
-	useNavigate,
 	useLocation,
-	Outlet,
 } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthContextProvider, useAuth } from './contexts/AuthContext';
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useMediaQuery } from '@mui/material';
@@ -40,33 +38,42 @@ function App() {
 	}, [prefersDarkMode]);
 
 	return (
-		<AuthProvider>
+		<AuthContextProvider>
 			<ThemeProvider theme={theme}>
 				<BrowserRouter>
 					<Suspense fallback={<ProgressElement />}>
 						<Routes>
 							<Route path="/" element={<Dashboard />} />
 							<Route path="/reset-password" element={<ResetPassword />} />
-							<Route path="/view" element={<AppView />} />
+							{/* <Route path="/view" element={<AppView />} /> */}
+							<Route
+								path="/view"
+								element={
+									<RequireAuth>
+										<AppView />
+									</RequireAuth>
+								}
+							/>
 							<Route path="*" element={<ErrorPage />} />
 						</Routes>
 					</Suspense>
 				</BrowserRouter>
 			</ThemeProvider>
-		</AuthProvider>
+		</AuthContextProvider>
 	);
 }
 
 export default memo(App);
 
-// function ProtectedRoute() {
-// 	const { currentUser } = useAuth();
-// 	const location = useLocation();
-// 	// const navigate = useNavigate();
+function RequireAuth({ children }) {
+	const { currentUser } = useAuth();
+	let location = useLocation();
 
-// 	if (isEmptyObject(currentUser)) {
-// 		return <Navigate to="/" state={{ from: location }} />;
-// 	}
+	console.log('RequireAuth', currentUser);
 
-// 	return <Outlet />;
-// }
+	if (currentUser === null)
+		return <Navigate to="/" state={{ from: location }} />;
+	// if (!currentUser) return <Navigate to="/" state={{ from: location }} />;
+
+	return children;
+}

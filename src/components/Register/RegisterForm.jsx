@@ -4,12 +4,8 @@ import { css } from '@emotion/react';
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-	getAuth,
-	createUserWithEmailAndPassword,
-	updateProfile,
-	signOut,
-} from 'firebase/auth';
+import { getAuth, updateProfile } from 'firebase/auth';
+import { useAuth } from '../../contexts/AuthContext';
 import { useForm } from 'react-hook-form';
 
 import { Alert, Grid, Snackbar } from '@mui/material';
@@ -35,17 +31,18 @@ const RegisterForm = () => {
 		register,
 		handleSubmit,
 		formState: { errors, isValid },
-	} = useForm({ mode: 'onSubmit' });
+	} = useForm({ mode: 'onBlur' });
 
-	const onSubmit = data => {
-		const auth = getAuth();
+	const { registerUser, signOutUser } = useAuth();
 
-		createUserWithEmailAndPassword(auth, data.email, data.password)
+	const onSubmit = data =>
+		registerUser(data.email, data.password)
 			.then(() => {
-				updateProfile(auth.currentUser, {
+				updateProfile(getAuth().currentUser, {
 					displayName: data.name,
 				});
 
+				// reset user state and form inputs value
 				setUser({ name: '', email: '', password: '' });
 				reset();
 
@@ -57,13 +54,14 @@ const RegisterForm = () => {
 					});
 				}
 
-				signOut(auth)
+				// sign out automatically sign in user after successfully registered user
+				signOutUser()
 					.then(() => navigate('/', { replace: true }))
 					.catch(error => console.error(error.message));
 			})
 			.catch(signUpError => {
 				if (signUpError) {
-					console.error('Provided email is already in use');
+					console.error('Provided email is already in use or ', signUpError);
 					setSignUpError({
 						message: 'Provided email is already in use. Try out another one!',
 						isActive: true,
@@ -71,7 +69,6 @@ const RegisterForm = () => {
 					setUser({ ...user, email: '' });
 				}
 			});
-	};
 
 	const handleChange = prop => event =>
 		setUser({ ...user, [prop]: event.target.value });
@@ -81,6 +78,7 @@ const RegisterForm = () => {
 
 		if (signUpSuccess.isActive)
 			return setSignUpSuccess({ ...signUpSuccess, isActive: false });
+
 		if (signUpError.isActive)
 			return setSignUpError({ ...signUpError, isActive: false });
 	};
@@ -118,20 +116,15 @@ const RegisterForm = () => {
 			</Grid>
 
 			<Snackbar
-				open={signUpSuccess.isActive}
-				autoHideDuration={2000}
+				open={
+					signUpSuccess.isActive ? signUpSuccess.isActive : signUpError.isActive
+				}
+				autoHideDuration={signUpSuccess.isActive ? 2000 : 3000}
 				onClose={handleSnackbarClose}>
-				<Alert onClose={handleSnackbarClose} severity="success">
-					{signUpSuccess.message}
-				</Alert>
-			</Snackbar>
-
-			<Snackbar
-				open={signUpError.isActive}
-				autoHideDuration={4500}
-				onClose={handleSnackbarClose}>
-				<Alert onClose={handleSnackbarClose} severity="error">
-					{signUpError.message}
+				<Alert
+					onClose={handleSnackbarClose}
+					severity={signUpSuccess.isActive ? 'success' : 'error'}>
+					{signUpSuccess.isActive ? signUpSuccess.message : signUpError.message}
 				</Alert>
 			</Snackbar>
 		</Grid>

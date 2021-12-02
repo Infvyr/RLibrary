@@ -1,27 +1,41 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import {
-	getAuth,
 	onAuthStateChanged,
-	GoogleAuthProvider,
 	signInWithPopup,
+	createUserWithEmailAndPassword,
+	signInWithEmailAndPassword,
+	GoogleAuthProvider,
+	signOut,
 } from 'firebase/auth';
+import { auth } from '../firebase/utils';
 
-const AuthContext = createContext();
+const AuthContext = createContext({
+	currentUser: null,
+	signUp: () => Promise,
+	signOut: () => Promise,
+	signIn: () => Promise,
+	signInWithGoogle: () => Promise,
+});
 
-export function useAuth() {
-	return useContext(AuthContext);
-}
+export const useAuth = () => useContext(AuthContext);
 
-export const signInWithGoogle = () =>
-	signInWithPopup(getAuth(), new GoogleAuthProvider());
+export const AuthContextProvider = ({ children }) => {
+	const [currentUser, setCurrentUser] = useState(null);
 
-export function AuthProvider({ children }) {
-	const [currentUser, setCurrentUser] = useState({});
-	const value = { currentUser, signInWithGoogle };
+	const registerUser = (email, password) =>
+		createUserWithEmailAndPassword(auth, email, password);
+
+	const signOutUser = () => signOut(auth);
+
+	const signInUser = (email, password) =>
+		signInWithEmailAndPassword(auth, email, password);
+
+	const signInWithGoogle = () =>
+		signInWithPopup(auth, new GoogleAuthProvider());
 
 	const handleUserStateChanges = user => {
 		if (user) {
-			const { displayName, email, uid, accessToken, photoURL } = user;
+			const { uid, displayName, email, photoURL, accessToken } = user;
 
 			setCurrentUser({
 				accessToken,
@@ -31,21 +45,25 @@ export function AuthProvider({ children }) {
 				uid,
 			});
 
-			console.log('Auth Context:');
-			console.log({ uid, displayName, email, photoURL, accessToken });
-		} else {
-			// User is signed out
-			setCurrentUser({});
+			console.log('AuthProvider logged in:', user);
 		}
 	};
 
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(getAuth(), handleUserStateChanges);
+		const unsubscribe = onAuthStateChanged(auth, handleUserStateChanges);
 
 		return () => {
 			unsubscribe();
 		};
 	}, []);
 
+	const value = {
+		currentUser,
+		registerUser,
+		signOutUser,
+		signInUser,
+		signInWithGoogle,
+	};
+
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
+};
