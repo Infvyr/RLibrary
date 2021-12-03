@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './firebase/utils';
-import CssBaseline from '@mui/material/CssBaseline';
 
 import App from './App';
+
+import CssBaseline from '@mui/material/CssBaseline';
 import './App.css';
 
 ReactDOM.render(

@@ -39,7 +39,6 @@ const FormButtons = () => {
 					signInWithGoogle()
 						.then(user => {
 							navigate('/view', { replace: true });
-							console.log('signInWithGoogle', user);
 						})
 						.catch(error => console.error(error))
 				}>

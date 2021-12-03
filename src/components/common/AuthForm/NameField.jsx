@@ -1,12 +1,12 @@
 import { Grid, TextField } from '@mui/material';
 
-const RegisterName = ({ name, handleChange, register, errors }) => (
+const RegisterName = ({ register, errors }) => (
 	<Grid item xs={12}>
 		<TextField
 			{...register('name', {
 				required: 'Please fill in this required field!',
 				pattern: {
-					value: /^[A-Za-z]+$/i,
+					value: /[A-Za-z]+$/i,
 					message: 'The name must contain only letters',
 				},
 				minLength: {
@@ -15,8 +15,6 @@ const RegisterName = ({ name, handleChange, register, errors }) => (
 				},
 			})}
 			label="Name"
-			value={name}
-			onChange={handleChange}
 			error={errors?.name ? true : false}
 			helperText={errors?.name && errors?.name?.message}
 			fullWidth

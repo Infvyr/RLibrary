@@ -2,22 +2,15 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { getAuth } from 'firebase/auth';
 import { useAuth } from '../../contexts/AuthContext';
-
 import { useForm } from 'react-hook-form';
 
-import { Alert, Grid, Snackbar } from '@mui/material';
 import { EmailField, PasswordField, SubmitButton, ResetPassword } from '../';
+import { Alert, Grid, Snackbar } from '@mui/material';
 
 const LoginForm = () => {
-	const [user, setUser] = useState({
-		name: '',
-		email: '',
-		password: '',
-	});
 	const [signInError, setSignInError] = useState({
 		message: '',
 		isActive: false,
@@ -32,27 +25,42 @@ const LoginForm = () => {
 	const { signInUser } = useAuth();
 	const navigate = useNavigate();
 
-	const onSubmit = data =>
-		signInUser(data.email, data.password)
-			.then(() => {
-				navigate('/view', { replace: true });
-			})
-			.catch(signInError => {
-				if (signInError) {
-					console.error(
-						"Provided email or password doesn't match or ",
-						signInError
-					);
+	const onSubmit = useCallback(async data => {
+		try {
+			await signInUser(data.email, data.password);
+			navigate('/view', { replace: true });
+		} catch (error) {
+			switch (error.code) {
+				case 'auth/user-not-found':
 					setSignInError({
-						message: "Provided email or password doesn't match",
+						message: 'Please verify the correctness of your email address!',
 						isActive: true,
 					});
-				}
-			});
+					break;
+				case 'auth/wrong-password':
+					setSignInError({
+						message: 'Please verify the correctness of your password!',
+						isActive: true,
+					});
+					break;
 
-	const handleChange = prop => event => {
-		setUser({ ...user, [prop]: event.target.value });
-	};
+				case 'auth/too-many-requests':
+					setSignInError({
+						message:
+							"We're sorry! Too many requests at time. Please try again later!",
+						isActive: true,
+					});
+					break;
+
+				default:
+					setSignInError({
+						message: error.code,
+						isActive: true,
+					});
+					break;
+			}
+		}
+	}, []);
 
 	const handleErrorClose = (event, reason) => {
 		if (reason === 'clickaway') return;
@@ -69,25 +77,15 @@ const LoginForm = () => {
 						flex-direction: column;
 						gap: 1em;
 					`}>
-					<EmailField
-						email={user.email}
-						handleChange={handleChange('email')}
-						register={register}
-						errors={errors}
-					/>
-					<PasswordField
-						password={user.password}
-						handleChange={handleChange('password')}
-						register={register}
-						errors={errors}
-					/>
+					<EmailField register={register} errors={errors} />
+					<PasswordField register={register} errors={errors} />
 					<SubmitButton btnTitle="Sign up" isValid={isValid} />
 				</form>
 			</Grid>
 
 			<Snackbar
 				open={signInError.isActive}
-				autoHideDuration={6000}
+				autoHideDuration={4000}
 				onClose={handleErrorClose}>
 				<Alert onClose={handleErrorClose} severity="error">
 					{signInError.message}

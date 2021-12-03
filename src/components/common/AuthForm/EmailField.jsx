@@ -1,6 +1,6 @@
 import { Grid, TextField } from '@mui/material';
 
-const EmailField = ({ email, handleChange, register, errors }) => (
+const EmailField = ({ register, errors }) => (
 	<Grid item xs={12}>
 		<TextField
 			{...register('email', {
@@ -8,8 +8,6 @@ const EmailField = ({ email, handleChange, register, errors }) => (
 			})}
 			type="email"
 			label="Email address"
-			value={email}
-			onChange={handleChange}
 			error={errors?.email ? true : false}
 			helperText={errors?.email && errors?.email?.message}
 			fullWidth

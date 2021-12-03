@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { red } from '@mui/material/colors';
 
-const PasswordField = ({ password, handleChange, register, errors }) => {
+const PasswordField = ({ register, errors }) => {
 	const minLength = 6;
 	const [showPassword, setShowPassword] = useState('');
 
@@ -46,8 +46,6 @@ const PasswordField = ({ password, handleChange, register, errors }) => {
 						</InputAdornment>
 					}
 					label="Password"
-					value={password}
-					onChange={handleChange}
 					error={errors?.password ? true : false}
 				/>
 				<Typography

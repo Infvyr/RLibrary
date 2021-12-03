@@ -1,11 +1,5 @@
 import { useMemo, useEffect, Suspense, lazy, memo } from 'react';
-import {
-	BrowserRouter,
-	Routes,
-	Route,
-	Navigate,
-	useLocation,
-} from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthContextProvider, useAuth } from './contexts/AuthContext';
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -16,6 +10,25 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const ErrorPage = lazy(() => import('./pages/ErrorPage'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const AppView = lazy(() => import('./pages/AppView'));
+
+const AuthenticatedRoute = ({ children }) => {
+	let { isAuthenticated } = useAuth();
+
+	if (isAuthenticated) return children;
+
+	return <Navigate to="/" />;
+};
+
+// const UnauthenticatedRoute = ({ children }) => {
+// 	let { isAuthenticated } = useAuth();
+// 	let location = useLocation();
+
+// 	if (!isAuthenticated) {
+// 		return children;
+// 	} else {
+// 		return <Navigate to="/"  />;
+// 	}
+// };
 
 function App() {
 	const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -45,13 +58,12 @@ function App() {
 						<Routes>
 							<Route path="/" element={<Dashboard />} />
 							<Route path="/reset-password" element={<ResetPassword />} />
-							{/* <Route path="/view" element={<AppView />} /> */}
 							<Route
 								path="/view"
 								element={
-									<RequireAuth>
+									<AuthenticatedRoute>
 										<AppView />
-									</RequireAuth>
+									</AuthenticatedRoute>
 								}
 							/>
 							<Route path="*" element={<ErrorPage />} />
@@ -64,16 +76,3 @@ function App() {
 }
 
 export default memo(App);
-
-function RequireAuth({ children }) {
-	const { currentUser } = useAuth();
-	let location = useLocation();
-
-	console.log('RequireAuth', currentUser);
-
-	if (currentUser === null)
-		return <Navigate to="/" state={{ from: location }} />;
-	// if (!currentUser) return <Navigate to="/" state={{ from: location }} />;
-
-	return children;
-}
