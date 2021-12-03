@@ -1,5 +1,12 @@
 import { useMemo, useEffect, Suspense, lazy, memo } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import {
+	BrowserRouter,
+	Routes,
+	Route,
+	Navigate,
+	Outlet,
+	useLocation,
+} from 'react-router-dom';
 import { AuthContextProvider, useAuth } from './contexts/AuthContext';
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -11,24 +18,28 @@ const ErrorPage = lazy(() => import('./pages/ErrorPage'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const AppView = lazy(() => import('./pages/AppView'));
 
+/*
 const AuthenticatedRoute = ({ children }) => {
-	let { isAuthenticated } = useAuth();
+	const { isAuthenticated } = useAuth();
+	const location = useLocation();
 
-	if (isAuthenticated) return children;
-
-	return <Navigate to="/" />;
+	return isAuthenticated ? (
+		children
+	) : (
+		<Navigate to="/" replace state={{ path: location.pathname }} />
+	);
 };
+*/
+const PrivateOutlet = () => {
+	const { isAuthenticated } = useAuth();
+	const location = useLocation();
 
-// const UnauthenticatedRoute = ({ children }) => {
-// 	let { isAuthenticated } = useAuth();
-// 	let location = useLocation();
-
-// 	if (!isAuthenticated) {
-// 		return children;
-// 	} else {
-// 		return <Navigate to="/"  />;
-// 	}
-// };
+	return isAuthenticated ? (
+		<Outlet />
+	) : (
+		<Navigate to="/" replace state={{ path: location.pathname }} />
+	);
+};
 
 function App() {
 	const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -57,15 +68,10 @@ function App() {
 					<Suspense fallback={<ProgressElement />}>
 						<Routes>
 							<Route path="/" element={<Dashboard />} />
+							<Route path="/view" element={<PrivateOutlet />}>
+								<Route path="" element={<AppView />} />
+							</Route>
 							<Route path="/reset-password" element={<ResetPassword />} />
-							<Route
-								path="/view"
-								element={
-									<AuthenticatedRoute>
-										<AppView />
-									</AuthenticatedRoute>
-								}
-							/>
 							<Route path="*" element={<ErrorPage />} />
 						</Routes>
 					</Suspense>

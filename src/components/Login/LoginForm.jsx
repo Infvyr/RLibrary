@@ -3,7 +3,7 @@
 import { css } from '@emotion/react';
 
 import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useForm } from 'react-hook-form';
 
@@ -24,11 +24,12 @@ const LoginForm = () => {
 	});
 	const { signInUser } = useAuth();
 	const navigate = useNavigate();
+	const location = useLocation();
 
 	const onSubmit = useCallback(async data => {
 		try {
 			await signInUser(data.email, data.password);
-			navigate('/view', { replace: true });
+			navigate(location.state?.path || '/view', { replace: true });
 		} catch (error) {
 			switch (error.code) {
 				case 'auth/user-not-found':
@@ -54,7 +55,7 @@ const LoginForm = () => {
 
 				default:
 					setSignInError({
-						message: error.code,
+						message: error.message,
 						isActive: true,
 					});
 					break;
