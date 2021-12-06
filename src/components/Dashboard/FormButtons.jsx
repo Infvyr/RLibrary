@@ -16,7 +16,7 @@ const FacebookIcon = createSvgIcon(
 );
 
 const FormButtons = () => {
-	const { signInWithGoogle } = useAuth();
+	const { signInWithGoogle, signInWithFacebook, setSignInError } = useAuth();
 	const navigate = useNavigate();
 
 	return (
@@ -35,13 +35,29 @@ const FormButtons = () => {
 					minWidth: '125px',
 					minHeight: '56px',
 				}}
-				onClick={() =>
-					signInWithGoogle()
-						.then(user => {
-							navigate('/view', { replace: true });
-						})
-						.catch(error => console.error(error))
-				}>
+				onClick={async () => {
+					try {
+						await signInWithGoogle();
+						navigate('/view', { replace: true });
+					} catch (error) {
+						switch (error.code) {
+							case 'auth/popup-blocked':
+								setSignInError({
+									message:
+										'Please go to browser settings put this address as exception for popups!',
+									isActive: true,
+								});
+								break;
+
+							default:
+								setSignInError({
+									message: error.message,
+									isActive: true,
+								});
+								break;
+						}
+					}
+				}}>
 				<GoogleIcon size="small" sx={{ color: '#DB4437' }} />
 			</Button>
 			<Button
@@ -52,6 +68,29 @@ const FormButtons = () => {
 					borderColor: 'rgba(145, 158, 171, 0.32)',
 					minWidth: '125px',
 					minHeight: '56px',
+				}}
+				onClick={async () => {
+					try {
+						await signInWithFacebook();
+						navigate('/view', { replace: true });
+					} catch (error) {
+						switch (error.code) {
+							case 'auth/popup-blocked':
+								setSignInError({
+									message:
+										'Please go to browser settings put this address as exception for popups!',
+									isActive: true,
+								});
+								break;
+
+							default:
+								setSignInError({
+									message: error.message,
+									isActive: true,
+								});
+								break;
+						}
+					}
 				}}>
 				<FacebookIcon size="small" sx={{ color: '#4267B2' }} />
 			</Button>

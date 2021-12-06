@@ -2,19 +2,21 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useForm } from 'react-hook-form';
 
-import { EmailField, PasswordField, SubmitButton, ResetPassword } from '../';
-import { Alert, Grid, Snackbar } from '@mui/material';
+import {
+	EmailField,
+	PasswordField,
+	SubmitButton,
+	ResetPassword,
+	SnackBarError,
+} from '../';
+import { Grid } from '@mui/material';
 
 const LoginForm = () => {
-	const [signInError, setSignInError] = useState({
-		message: '',
-		isActive: false,
-	});
 	const {
 		register,
 		handleSubmit,
@@ -22,7 +24,7 @@ const LoginForm = () => {
 	} = useForm({
 		mode: 'onBlur',
 	});
-	const { signInUser } = useAuth();
+	const { signInUser, setSignInError } = useAuth();
 	const navigate = useNavigate();
 	const location = useLocation();
 
@@ -63,11 +65,6 @@ const LoginForm = () => {
 		}
 	}, []);
 
-	const handleErrorClose = (event, reason) => {
-		if (reason === 'clickaway') return;
-		setSignInError({ ...signInError, isActive: false });
-	};
-
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12}>
@@ -84,14 +81,7 @@ const LoginForm = () => {
 				</form>
 			</Grid>
 
-			<Snackbar
-				open={signInError.isActive}
-				autoHideDuration={4000}
-				onClose={handleErrorClose}>
-				<Alert onClose={handleErrorClose} severity="error">
-					{signInError.message}
-				</Alert>
-			</Snackbar>
+			<SnackBarError />
 		</Grid>
 	);
 };

@@ -23,6 +23,7 @@ export { default as NameField } from './common/AuthForm/NameField';
 export { default as PasswordField } from './common/AuthForm/PasswordField';
 export { default as EmailField } from './common/AuthForm/EmailField';
 export { default as SubmitButton } from './common/AuthForm/SubmitButton';
+export { default as SnackBarError } from './common/AuthToastError/SnackBarError';
 
 // Application View
 export { default as AppBarView } from './Appbar/AppBarView';
