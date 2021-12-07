@@ -27,3 +27,4 @@ export { default as SnackBarError } from './common/AuthToastError/SnackBarError'
 
 // Application View
 export { default as AppBarView } from './Appbar/AppBarView';
+export { default as AppMainView } from './AppMainView/AppMainView';
