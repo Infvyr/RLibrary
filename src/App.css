@@ -1,35 +1,40 @@
 body {
-    min-height: 100vh;
+	min-height: 100vh;
 }
 
-[data-theme="dark"]{
-  color: #fff;
-  background-color: #121212;
-  background-image: linear-gradient(rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.09));
+[data-theme='dark'] {
+	color: #fff;
+	background-color: #121212;
+	background-image: linear-gradient(
+		rgba(255, 255, 255, 0.09),
+		rgba(255, 255, 255, 0.09)
+	);
 }
-[data-theme="dark"] * {
-  color: #fff;
+[data-theme='dark'] a,
+[data-theme='dark'] p,
+[data-theme='dark'] div {
+	color: #fff;
 }
 
 #root {
-    min-height: inherit;
+	min-height: inherit;
 }
 
 img {
-    max-width: 100%;
-    height: auto;
+	max-width: 100%;
+	height: auto;
 }
 
 figure {
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
+	margin: 0;
+	display: flex;
+	flex-wrap: wrap;
 }
 
-a{
-    text-decoration: none;
+a {
+	text-decoration: none;
 }
 
-.Mui-required[data-shrink="true"] .MuiInputLabel-asterisk{
-    color: red;
+.Mui-required[data-shrink='true'] .MuiInputLabel-asterisk {
+	color: red;
 }

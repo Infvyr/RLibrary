@@ -34,6 +34,9 @@ export default function CustomToolbar() {
 
 	const handleAddRecord = async e => {
 		e.preventDefault();
+
+		if (!bookName || !bookAuthor || !bookRegDate || !bookPrice) return;
+
 		const docRef = await addDoc(collection(db, 'books'), {
 			name: bookName,
 			author: bookAuthor,
@@ -41,7 +44,6 @@ export default function CustomToolbar() {
 			price: parseFloat(bookPrice),
 		});
 
-		console.log({ bookName, bookAuthor, bookRegDate, price });
 		console.log('Document written with ID: ', docRef.id);
 
 		setBookName('');
@@ -52,8 +54,13 @@ export default function CustomToolbar() {
 	};
 
 	return (
-		<GridToolbarContainer>
-			<Box sx={{ flex: '1', order: '1', textAlign: 'right' }}>
+		<GridToolbarContainer sx={{ flexDirection: { xs: 'column', sm: 'row' } }}>
+			<Box
+				sx={{
+					flex: '1',
+					order: '1',
+					textAlign: { xs: 'center', sm: 'right' },
+				}}>
 				<GridToolbarColumnsButton />
 				<GridToolbarFilterButton />
 				<GridToolbarDensitySelector />
@@ -75,6 +82,7 @@ export default function CustomToolbar() {
 						value={bookName}
 						onChange={e => setBookName(e.target.value)}
 						fullWidth
+						required
 					/>
 					<TextField
 						margin="dense"
@@ -84,6 +92,7 @@ export default function CustomToolbar() {
 						value={bookAuthor}
 						onChange={e => setBookAuthor(e.target.value)}
 						fullWidth
+						required
 						sx={{ mt: '0' }}
 					/>
 					<LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -92,26 +101,27 @@ export default function CustomToolbar() {
 							value={bookRegDate}
 							onChange={newValue => setBookRegDate(newValue)}
 							renderInput={params => (
-								<TextField {...params} fullWidth variant="standard" />
+								<TextField {...params} fullWidth variant="standard" required />
 							)}
 						/>
 					</LocalizationProvider>
 					<TextField
 						margin="dense"
 						id="price"
+						type="number"
 						label="Price"
 						variant="standard"
-						fullWidth
-						type="number"
-						sx={{ mt: '0' }}
 						inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
 						value={bookPrice}
 						onChange={e => setBookPrice(e.target.value)}
+						fullWidth
+						required
+						sx={{ mt: '0' }}
 					/>
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={handleAddRecord}>Save changes</Button>
+					<Button onClick={handleAddRecord}>Add new record</Button>
 				</DialogActions>
 			</Dialog>
 		</GridToolbarContainer>
