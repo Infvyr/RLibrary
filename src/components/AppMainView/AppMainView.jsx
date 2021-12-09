@@ -1,66 +1,42 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { db } from '../../firebase/utils';
-import { collection, onSnapshot, query } from 'firebase/firestore';
-
-import { DataGrid, GridToolbar, GridActionsCellItem } from '@mui/x-data-grid';
+import { doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import useFirebaseCollection from '../../hooks/useFirebaseCollection';
 
 import { Grid } from '@mui/material';
-import Button from '@mui/material/Button';
-import AddIcon from '@mui/icons-material/Add';
+import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
+import CustomToolbar from './CustomToolbar';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
 
 function formatDate(d) {
-	return d.toDate().toLocaleString('ro-RO');
-}
-
-function EditToolbar(props) {
-	const { apiRef } = props;
-
-	const handleClick = e => {
-		console.log(e.target);
-	};
-
-	return (
-		<GridToolbarContainer>
-			<Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-				Add record
-			</Button>
-		</GridToolbarContainer>
-	);
+	return d.toDate().toLocaleDateString();
 }
 
 const AppMainView = () => {
-	const [books, setBooks] = useState([]);
-	const [loading, setLoading] = useState(false);
 	const [pageSize, setPageSize] = useState(15);
+	const { books } = useFirebaseCollection();
 
-	const getBooks = () => {
-		const unsubscribe = onSnapshot(
-			query(collection(db, 'books')),
-			querySnapshot => {
-				setLoading(true);
-				setBooks(
-					querySnapshot.docs.map(doc => ({
-						id: doc.id,
-						...doc.data(),
-					}))
-				);
-			}
-		);
-
-		setLoading(false);
-
-		return unsubscribe;
+	const handleSaveClick = id => event => {
+		event.stopPropagation();
+		console.log(id);
 	};
 
-	useEffect(() => {
-		getBooks();
+	const handleUpdateDoc = async (
+		id,
+		author,
+		name,
+		price,
+		registration_date
+	) => {
+		console.log(id);
+		// const newFields = { author, name, price, registration_date };
+		// await updateDoc(doc(db, 'books', id), newFields);
+	};
 
-		return () => getBooks();
-	}, []);
+	const handleDeleteDoc = async id => await deleteDoc(doc(db, 'books', id));
 
 	const columns = [
 		// { field: 'id', headerName: 'ID', width: 80 },
@@ -79,7 +55,7 @@ const AppMainView = () => {
 		{
 			field: 'registration_date',
 			headerName: 'Registration date',
-			type: 'dateTime',
+			type: 'date',
 			width: 160,
 			editable: true,
 			valueFormatter: params => formatDate(params.value),
@@ -88,6 +64,7 @@ const AppMainView = () => {
 			field: 'price',
 			headerName: 'Price, MDL',
 			sortable: true,
+			editable: true,
 			width: 100,
 		},
 		{
@@ -104,14 +81,14 @@ const AppMainView = () => {
 						<GridActionsCellItem
 							icon={<SaveIcon />}
 							label="Save"
-							// onClick={handleSaveClick(id)}
+							onClick={handleSaveClick(id)}
 							color="primary"
 						/>,
 						<GridActionsCellItem
 							icon={<CancelIcon />}
 							label="Cancel"
 							className="textPrimary"
-							// onClick={handleCancelClick(id)}
+							// onClick={()=>handleCancelClick(id)}
 							color="inherit"
 						/>,
 					];
@@ -122,13 +99,13 @@ const AppMainView = () => {
 						icon={<EditIcon />}
 						label="Edit"
 						className="textPrimary"
-						// onClick={handleEditClick(id)}
+						onClick={() => handleUpdateDoc(id)}
 						color="inherit"
 					/>,
 					<GridActionsCellItem
 						icon={<DeleteIcon />}
 						label="Delete"
-						// onClick={handleDeleteClick(id)}
+						onClick={() => handleDeleteDoc(id)}
 						color="inherit"
 					/>,
 				];
@@ -142,14 +119,17 @@ const AppMainView = () => {
 				<DataGrid
 					columns={columns}
 					rows={books}
+					sortModel={[
+						{
+							field: 'registration_date',
+							sort: 'desc',
+						},
+					]}
 					checkboxSelection
 					disableSelectionOnClick
-					editMode="row"
-					// onRowEditStart={handleRowEditStart}
-					// onRowEditStop={handleRowEditStop}
-					// onCellFocusOut={handleCellFocusOut}
+					// editMode="row"
 					components={{
-						Toolbar: GridToolbar,
+						Toolbar: CustomToolbar,
 					}}
 					pagination
 					{...books}
