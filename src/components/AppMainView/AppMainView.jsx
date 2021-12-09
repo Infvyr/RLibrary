@@ -35,7 +35,7 @@ function EditToolbar(props) {
 const AppMainView = () => {
 	const [books, setBooks] = useState([]);
 	const [loading, setLoading] = useState(false);
-	const [pageSize, setPageSize] = useState(1);
+	const [pageSize, setPageSize] = useState(15);
 
 	const getBooks = () => {
 		const unsubscribe = onSnapshot(
@@ -153,10 +153,10 @@ const AppMainView = () => {
 					}}
 					pagination
 					{...books}
-					rowsPerPageOptions={[1, 3, 5]}
+					rowsPerPageOptions={[10, 15, 30, 50, 75, 100]}
 					pageSize={pageSize}
 					onPageSizeChange={newPageSize => setPageSize(newPageSize)}
-					sx={{ color: 'black' }}
+					sx={{ color: 'black', minHeight: 'calc(100vh - 150px)' }}
 				/>
 			</Grid>
 		</Grid>

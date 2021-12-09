@@ -39,14 +39,14 @@ const AppBarView = () => {
 					<Chip
 						avatar={
 							currentUser?.photoURL === null ? (
-								<AccountCircle />
+								<AccountCircle sx={{ fill: 'white' }} />
 							) : (
 								<Avatar src={currentUser?.photoURL} />
 							)
 						}
 						label={currentUser?.displayName}
 						onClick={handleMenu}
-						sx={{ bgcolor: 'transparent' }}
+						sx={{ bgcolor: 'transparent', color: 'white' }}
 					/>
 					<Menu
 						id="menu-appbar"

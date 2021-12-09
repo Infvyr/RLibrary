@@ -2,8 +2,13 @@ body {
     min-height: 100vh;
 }
 
-body[data-theme="dark"] a{
-    color: #fff;
+[data-theme="dark"]{
+  color: #fff;
+  background-color: #121212;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.09));
+}
+[data-theme="dark"] * {
+  color: #fff;
 }
 
 #root {
