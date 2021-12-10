@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from '@firebase/auth';
 import { getFirestore } from '@firebase/firestore';
+// import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 
 const firebaseConfig = {
 	apiKey: import.meta.env.VITE_REACT_APP_FIREBASE_API_KEY,
@@ -19,3 +20,12 @@ export const auth = getAuth(app);
 
 // Get DB
 export const db = getFirestore(app);
+
+// Recaptcha
+// const appCheck = initializeAppCheck(app, {
+// 	provider: new ReCaptchaV3Provider(
+// 		'import.meta.env.VITE_REACT_APP_PUBLIC_CAPTCHA_KEY'
+// 	),
+
+// 	isTokenAutoRefreshEnabled: true,
+// });

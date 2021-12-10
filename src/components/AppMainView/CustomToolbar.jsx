@@ -1,6 +1,15 @@
 import { useState } from 'react';
 import { db } from '../../firebase/utils';
-import { collection, addDoc } from 'firebase/firestore';
+import {
+	writeBatch,
+	collection,
+	doc,
+	addDoc,
+	updateDoc,
+	Timestamp,
+} from 'firebase/firestore';
+import enGb from 'date-fns/locale/en-GB';
+
 import {
 	GridToolbarContainer,
 	GridToolbarColumnsButton,
@@ -17,19 +26,21 @@ import {
 	DialogActions,
 	TextField,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import EditIcon from '@mui/icons-material/Edit';
 
-export default function CustomToolbar() {
+export default function CustomToolbar({ selectionRecord, editRowData }) {
 	const [open, setOpen] = useState(false);
 	const [bookName, setBookName] = useState('');
 	const [bookAuthor, setBookAuthor] = useState('');
 	const [bookRegDate, setBookRegDate] = useState(null);
 	const [bookPrice, setBookPrice] = useState('');
 
-	const handleClickOpen = () => setOpen(true);
+	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
 
 	const handleAddRecord = async e => {
@@ -37,20 +48,41 @@ export default function CustomToolbar() {
 
 		if (!bookName || !bookAuthor || !bookRegDate || !bookPrice) return;
 
-		const docRef = await addDoc(collection(db, 'books'), {
+		await addDoc(collection(db, 'books'), {
 			name: bookName,
 			author: bookAuthor,
-			registration_date: bookRegDate,
+			registration_date: Timestamp.fromDate(new Date(bookRegDate)),
 			price: parseFloat(bookPrice),
 		});
-
-		console.log('Document written with ID: ', docRef.id);
 
 		setBookName('');
 		setBookAuthor('');
 		setBookRegDate(null);
 		setBookPrice('');
 		setOpen(false);
+	};
+
+	const handleUpdateRecord = async (
+		selectionRecord,
+		name = editRowData.name.value,
+		author = editRowData.author.value,
+		regDate = editRowData.registration_date.value,
+		price = editRowData.price.value
+	) => {
+		if (!name || !author || !regDate || !price) return;
+
+		await updateDoc(doc(db, 'books', selectionRecord[0]), {
+			name: editRowData.name.value,
+			author: editRowData.author.value,
+			price: editRowData.price.value,
+			registration_date: editRowData.registration_date.value,
+		});
+	};
+
+	const handleDeleteDoc = async selectionRecord => {
+		const batch = writeBatch(db);
+		selectionRecord.forEach(rec => batch.delete(doc(db, 'books', rec)));
+		await batch.commit();
 	};
 
 	return (
@@ -66,9 +98,34 @@ export default function CustomToolbar() {
 				<GridToolbarDensitySelector />
 				<GridToolbarExport />
 			</Box>
-			<Button color="primary" startIcon={<AddIcon />} onClick={handleClickOpen}>
+			<Button color="primary" startIcon={<AddIcon />} onClick={handleOpen}>
 				Add record
 			</Button>
+			{selectionRecord.length === 1 && (
+				<Button
+					color="primary"
+					startIcon={<EditIcon />}
+					onClick={() =>
+						handleUpdateRecord(
+							selectionRecord,
+							editRowData.name.value,
+							editRowData.author.value,
+							editRowData.registration_date.value,
+							editRowData.price.value
+						)
+					}>
+					Update record
+				</Button>
+			)}
+			{selectionRecord.length !== 0 && (
+				<Button
+					color="primary"
+					startIcon={<DeleteForeverIcon />}
+					onClick={() => handleDeleteDoc(selectionRecord)}>
+					Delete record
+				</Button>
+			)}
+
 			<Dialog open={open} onClose={handleClose} fullWidth>
 				<DialogTitle>Add new record</DialogTitle>
 				<DialogContent
@@ -95,7 +152,7 @@ export default function CustomToolbar() {
 						required
 						sx={{ mt: '0' }}
 					/>
-					<LocalizationProvider dateAdapter={AdapterDateFns}>
+					<LocalizationProvider dateAdapter={AdapterDateFns} locale={enGb}>
 						<DatePicker
 							label="Registration date"
 							value={bookRegDate}
