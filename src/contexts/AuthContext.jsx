@@ -14,9 +14,15 @@ const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
 	const [currentUser, setCurrentUser] = useState();
-	const [signInError, setSignInError] = useState({
+	const [error, setError] = useState({
 		message: '',
 		isActive: false,
+	});
+	const [message, setMessage] = useState({
+		errorMessage: '',
+		isError: false,
+		successMessage: '',
+		isSuccess: false,
 	});
 
 	const registerUser = (email, password) =>
@@ -46,8 +52,10 @@ export const AuthContextProvider = ({ children }) => {
 		signInUser,
 		signInWithGoogle,
 		signInWithFacebook,
-		signInError,
-		setSignInError,
+		error,
+		setError,
+		message,
+		setMessage,
 	};
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

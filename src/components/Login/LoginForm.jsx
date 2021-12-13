@@ -24,7 +24,8 @@ const LoginForm = () => {
 	} = useForm({
 		mode: 'onBlur',
 	});
-	const { signInUser, setSignInError } = useAuth();
+
+	const { signInUser, setSignInError, message, setMessage } = useAuth();
 	const navigate = useNavigate();
 	const location = useLocation();
 
@@ -32,6 +33,7 @@ const LoginForm = () => {
 		try {
 			await signInUser(data.email, data.password);
 			navigate(location.state?.path || '/view', { replace: true });
+			setMessage({ ...message, successMessage: '' });
 		} catch (error) {
 			switch (error.code) {
 				case 'auth/user-not-found':

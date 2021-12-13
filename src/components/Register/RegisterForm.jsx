@@ -2,22 +2,23 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { useAuth } from '../../contexts/AuthContext';
 import { useForm } from 'react-hook-form';
 
-import { Alert, Grid, Snackbar } from '@mui/material';
-import { NameField, EmailField, PasswordField, SubmitButton } from '../';
+import { Grid } from '@mui/material';
+import {
+	NameField,
+	EmailField,
+	PasswordField,
+	SubmitButton,
+	ConditionalSnackbar,
+} from '../';
 
 const RegisterForm = () => {
-	const [signUpMessage, setSignUpMessage] = useState({
-		errorMessage: '',
-		isErrorMessageActive: false,
-		successMessage: '',
-		isSuccessMessageActive: false,
-	});
+	const { registerUser, signOutUser, message, setMessage } = useAuth();
 	const navigate = useNavigate();
 	const {
 		reset,
@@ -25,8 +26,6 @@ const RegisterForm = () => {
 		handleSubmit,
 		formState: { errors, isValid },
 	} = useForm({ mode: 'onBlur' });
-
-	const { registerUser, signOutUser } = useAuth();
 
 	const onSubmit = useCallback(async data => {
 		try {
@@ -38,12 +37,11 @@ const RegisterForm = () => {
 				// reset form inputs value
 				reset();
 
-				if (signUpMessage) {
-					console.warn('User has been successfully registered');
-					setSignUpMessage({
-						...signUpMessage,
+				if (!message.isSuccess) {
+					setMessage({
+						...message,
 						successMessage: 'You have signed up successfully!',
-						isSuccessMessageActive: true,
+						isSuccess: true,
 					});
 				}
 
@@ -55,31 +53,15 @@ const RegisterForm = () => {
 		} catch (error) {
 			if (error) {
 				console.error('Provided email is already in use or ', error);
-				setSignUpMessage({
-					...signUpMessage,
+				setMessage({
+					...message,
 					errorMessage:
 						'Provided email is already in use. Try out another one!',
-					isErrorMessageActive: true,
+					isError: true,
 				});
 			}
 		}
 	}, []);
-
-	const handleSnackbarClose = (event, reason) => {
-		if (reason === 'clickaway') return;
-
-		if (signUpMessage.isSuccessMessageActive)
-			return setSignUpMessage({
-				...signUpMessage,
-				isSuccessMessageActive: false,
-			});
-
-		if (signUpMessage.isErrorMessageActive)
-			return setSignUpMessage({
-				...signUpMessage,
-				isErrorMessageActive: false,
-			});
-	};
 
 	return (
 		<Grid container spacing={2}>
@@ -98,22 +80,7 @@ const RegisterForm = () => {
 				</form>
 			</Grid>
 
-			<Snackbar
-				open={
-					signUpMessage.isSuccessMessageActive
-						? signUpMessage.isSuccessMessageActive
-						: signUpMessage.isErrorMessageActive
-				}
-				autoHideDuration={signUpMessage.isSuccessMessageActive ? 3000 : 3000}
-				onClose={handleSnackbarClose}>
-				<Alert
-					onClose={handleSnackbarClose}
-					severity={signUpMessage.isSuccessMessageActive ? 'success' : 'error'}>
-					{signUpMessage.isSuccessMessageActive
-						? signUpMessage.successMessage
-						: signUpMessage.errorMessage}
-				</Alert>
-			</Snackbar>
+			<ConditionalSnackbar />
 		</Grid>
 	);
 };

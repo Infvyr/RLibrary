@@ -2,20 +2,20 @@ import { Alert, Snackbar } from '@mui/material';
 import { useAuth } from '../../../contexts/AuthContext';
 
 const SnackBarError = () => {
-	const { setSignInError, signInError } = useAuth();
+	const { error, setError } = useAuth();
 
 	const handleErrorClose = (event, reason) => {
 		if (reason === 'clickaway') return;
-		setSignInError({ ...signInError, isActive: false });
+		setError({ ...error, isActive: false });
 	};
 
 	return (
 		<Snackbar
-			open={signInError.isActive}
+			open={error.isActive}
 			autoHideDuration={4000}
 			onClose={handleErrorClose}>
 			<Alert onClose={handleErrorClose} severity="error">
-				{signInError.message}
+				{error.message}
 			</Alert>
 		</Snackbar>
 	);

@@ -1,14 +1,7 @@
 import { useState } from 'react';
 import { db } from '../../firebase/utils';
-import {
-	writeBatch,
-	collection,
-	doc,
-	addDoc,
-	updateDoc,
-	Timestamp,
-} from 'firebase/firestore';
-import enGb from 'date-fns/locale/en-GB';
+import { writeBatch, doc, updateDoc } from 'firebase/firestore';
+import { useAuth } from '../../contexts/AuthContext';
 
 import {
 	GridToolbarContainer,
@@ -17,68 +10,65 @@ import {
 	GridToolbarExport,
 	GridToolbarDensitySelector,
 } from '@mui/x-data-grid';
-import {
-	Box,
-	Button,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-	TextField,
-} from '@mui/material';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
+import { Box, Button } from '@mui/material';
+import AddNewBookDocDialog from './AddNewBookDocDialog';
+import { ConditionalSnackbar } from '../';
+
 import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 
 export default function CustomToolbar({ selectionRecord, editRowData }) {
+	const { message, setMessage } = useAuth();
 	const [open, setOpen] = useState(false);
-	const [bookName, setBookName] = useState('');
-	const [bookAuthor, setBookAuthor] = useState('');
-	const [bookRegDate, setBookRegDate] = useState(null);
-	const [bookPrice, setBookPrice] = useState('');
+
+	const rowData = {
+		name: editRowData.name?.value,
+		author: editRowData.author?.value,
+		price: editRowData.price?.value,
+		date: editRowData.registration_date?.value,
+	};
 
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
 
-	const handleAddRecord = async e => {
-		e.preventDefault();
-
-		if (!bookName || !bookAuthor || !bookRegDate || !bookPrice) return;
-
-		await addDoc(collection(db, 'books'), {
-			name: bookName,
-			author: bookAuthor,
-			registration_date: Timestamp.fromDate(new Date(bookRegDate)),
-			price: parseFloat(bookPrice),
-		});
-
-		setBookName('');
-		setBookAuthor('');
-		setBookRegDate(null);
-		setBookPrice('');
-		setOpen(false);
-	};
-
+	// update selected datagrid row in firestore
 	const handleUpdateRecord = async (
 		selectionRecord,
-		name = editRowData.name.value,
-		author = editRowData.author.value,
-		regDate = editRowData.registration_date.value,
-		price = editRowData.price.value
+		name,
+		author,
+		regDate,
+		price
 	) => {
-		if (!name || !author || !regDate || !price) return;
+		try {
+			if (!name || !author || !regDate || !price) return;
 
-		await updateDoc(doc(db, 'books', selectionRecord[0]), {
-			name: editRowData.name.value,
-			author: editRowData.author.value,
-			price: editRowData.price.value,
-			registration_date: editRowData.registration_date.value,
-		});
+			const newFields = {
+				name: rowData.name,
+				author: rowData.author,
+				price: rowData.price,
+				registration_date: rowData.date,
+			};
+
+			await updateDoc(doc(db, 'books', selectionRecord[0]), newFields);
+
+			setMessage({
+				...message,
+				successMessage: 'You have successfully updated the record!',
+				isSuccess: true,
+			});
+		} catch (error) {
+			if (error) {
+				setMessage({
+					...message,
+					errorMessage: error.message,
+					isError: true,
+				});
+			}
+		}
 	};
 
+	// delete document in firestore
 	const handleDeleteDoc = async selectionRecord => {
 		const batch = writeBatch(db);
 		selectionRecord.forEach(rec => batch.delete(doc(db, 'books', rec)));
@@ -108,10 +98,10 @@ export default function CustomToolbar({ selectionRecord, editRowData }) {
 					onClick={() =>
 						handleUpdateRecord(
 							selectionRecord,
-							editRowData.name.value,
-							editRowData.author.value,
-							editRowData.registration_date.value,
-							editRowData.price.value
+							rowData.name,
+							rowData.author,
+							rowData.price,
+							rowData.date
 						)
 					}>
 					Update record
@@ -126,61 +116,8 @@ export default function CustomToolbar({ selectionRecord, editRowData }) {
 				</Button>
 			)}
 
-			<Dialog open={open} onClose={handleClose} fullWidth>
-				<DialogTitle>Add new record</DialogTitle>
-				<DialogContent
-					sx={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="name"
-						label="Book Name"
-						variant="standard"
-						value={bookName}
-						onChange={e => setBookName(e.target.value)}
-						fullWidth
-						required
-					/>
-					<TextField
-						margin="dense"
-						id="author"
-						label="Author"
-						variant="standard"
-						value={bookAuthor}
-						onChange={e => setBookAuthor(e.target.value)}
-						fullWidth
-						required
-						sx={{ mt: '0' }}
-					/>
-					<LocalizationProvider dateAdapter={AdapterDateFns} locale={enGb}>
-						<DatePicker
-							label="Registration date"
-							value={bookRegDate}
-							onChange={newValue => setBookRegDate(newValue)}
-							renderInput={params => (
-								<TextField {...params} fullWidth variant="standard" required />
-							)}
-						/>
-					</LocalizationProvider>
-					<TextField
-						margin="dense"
-						id="price"
-						type="number"
-						label="Price"
-						variant="standard"
-						inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-						value={bookPrice}
-						onChange={e => setBookPrice(e.target.value)}
-						fullWidth
-						required
-						sx={{ mt: '0' }}
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={handleAddRecord}>Add new record</Button>
-				</DialogActions>
-			</Dialog>
+			<AddNewBookDocDialog open={open} handleClose={handleClose} />
+			<ConditionalSnackbar />
 		</GridToolbarContainer>
 	);
 }

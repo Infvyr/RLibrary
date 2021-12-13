@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { toDate } from 'date-fns';
 import useFirebaseCollection from '../../hooks/useFirebaseCollection';
 
 import { Grid } from '@mui/material';
@@ -7,9 +6,12 @@ import { DataGrid } from '@mui/x-data-grid';
 import CustomToolbar from './CustomToolbar';
 
 function formatDate(timestamp) {
-	let t = new Date(timestamp * 1000);
-	return `${t.getMonth() + 1}/${t.getDate()}/${t.getFullYear()}`;
-	// return d.toDate().toLocaleDateString();
+	const t = new Date(timestamp * 1000);
+	const day = t.toLocaleDateString('default', { day: '2-digit' });
+	let month = t.toLocaleDateString('default', { month: 'short' });
+	let year = t.toLocaleDateString('default', { year: 'numeric' });
+
+	return `${day}/${month}/${year}`;
 }
 
 const AppMainView = () => {
@@ -29,7 +31,6 @@ const AppMainView = () => {
 	);
 
 	const columns = [
-		// { field: 'id', headerName: 'ID', width: 80 },
 		{
 			field: 'name',
 			headerName: 'Book name',
@@ -46,13 +47,8 @@ const AppMainView = () => {
 			field: 'registration_date',
 			headerName: 'Registration date',
 			type: 'date',
-			dateSetting: { locale: 'en-GB' },
 			minWidth: 200,
 			editable: true,
-			// valueFormatter: params =>
-			// 	new Date(
-			// 		params.value.seconds * 1000 + params.value.nanoseconds / 1000000
-			// 	).toLocaleDateString(),
 			valueFormatter: params => formatDate(params.value.seconds),
 		},
 		{
