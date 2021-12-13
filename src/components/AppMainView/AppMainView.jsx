@@ -1,21 +1,13 @@
 import { useState, useCallback } from 'react';
 import useFirebaseCollection from '../../hooks/useFirebaseCollection';
+import { COLUMNS } from './data/columns';
 
 import { Grid } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import CustomToolbar from './CustomToolbar';
 
-function formatDate(timestamp) {
-	const t = new Date(timestamp * 1000);
-	const day = t.toLocaleDateString('default', { day: '2-digit' });
-	let month = t.toLocaleDateString('default', { month: 'short' });
-	let year = t.toLocaleDateString('default', { year: 'numeric' });
-
-	return `${day}/${month}/${year}`;
-}
-
 const AppMainView = () => {
-	const { books } = useFirebaseCollection();
+	const { books, setBooks } = useFirebaseCollection();
 	const [selectionRecord, setSelectionRecord] = useState([]);
 	const [pageSize, setPageSize] = useState(15);
 	const [editRowsModel, setEditRowsModel] = useState({});
@@ -30,41 +22,11 @@ const AppMainView = () => {
 		[editRowData]
 	);
 
-	const columns = [
-		{
-			field: 'name',
-			headerName: 'Book name',
-			minWidth: 360,
-			editable: true,
-		},
-		{
-			field: 'author',
-			headerName: 'Author',
-			minWidth: 200,
-			editable: true,
-		},
-		{
-			field: 'registration_date',
-			headerName: 'Registration date',
-			type: 'date',
-			minWidth: 200,
-			editable: true,
-			valueFormatter: params => formatDate(params.value.seconds),
-		},
-		{
-			field: 'price',
-			headerName: 'Price, MDL',
-			sortable: true,
-			minWidth: 130,
-			editable: true,
-		},
-	];
-
 	return (
 		<Grid container rowSpacing={2} sx={{ p: 5 }}>
-			<Grid item xs={12}>
+			<Grid item xs={12} sx={{ minHeight: 'calc(100vh - 150px)' }}>
 				<DataGrid
-					columns={columns}
+					columns={COLUMNS}
 					rows={books}
 					sortModel={[
 						{
@@ -79,7 +41,7 @@ const AppMainView = () => {
 						Toolbar: CustomToolbar,
 					}}
 					componentsProps={{
-						toolbar: { selectionRecord, editRowData },
+						toolbar: { selectionRecord, editRowData, setBooks },
 					}}
 					selectionModel={selectionRecord}
 					checkboxSelection
@@ -93,7 +55,7 @@ const AppMainView = () => {
 					onPageSizeChange={newPageSize => setPageSize(newPageSize)}
 					disableSelectionOnClick
 					disableColumnMenu
-					sx={{ color: 'black', minHeight: 'calc(100vh - 150px)' }}
+					sx={{ color: 'black' }}
 				/>
 			</Grid>
 		</Grid>

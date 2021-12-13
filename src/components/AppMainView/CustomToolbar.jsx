@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { db } from '../../firebase/utils';
-import { writeBatch, doc, updateDoc } from 'firebase/firestore';
+import {
+	writeBatch,
+	collection,
+	doc,
+	updateDoc,
+	Timestamp,
+} from 'firebase/firestore';
 import { useAuth } from '../../contexts/AuthContext';
 
 import {
@@ -11,14 +17,18 @@ import {
 	GridToolbarDensitySelector,
 } from '@mui/x-data-grid';
 import { Box, Button } from '@mui/material';
-import AddNewBookDocDialog from './AddNewBookDocDialog';
+import { BookDocDialog } from '../';
 import { ConditionalSnackbar } from '../';
 
 import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 
-export default function CustomToolbar({ selectionRecord, editRowData }) {
+export default function CustomToolbar({
+	selectionRecord,
+	editRowData,
+	setBooks,
+}) {
 	const { message, setMessage } = useAuth();
 	const [open, setOpen] = useState(false);
 
@@ -58,21 +68,33 @@ export default function CustomToolbar({ selectionRecord, editRowData }) {
 				isSuccess: true,
 			});
 		} catch (error) {
-			if (error) {
-				setMessage({
-					...message,
-					errorMessage: error.message,
-					isError: true,
-				});
-			}
+			setMessage({
+				...message,
+				errorMessage: error.message,
+				isError: true,
+			});
 		}
 	};
 
 	// delete document in firestore
 	const handleDeleteDoc = async selectionRecord => {
-		const batch = writeBatch(db);
-		selectionRecord.forEach(rec => batch.delete(doc(db, 'books', rec)));
-		await batch.commit();
+		try {
+			const batch = writeBatch(db);
+			selectionRecord.forEach(rec => batch.delete(doc(db, 'books', rec)));
+			await batch.commit();
+
+			setMessage({
+				...message,
+				successMessage: 'You have successfully deleted the record!',
+				isSuccess: true,
+			});
+		} catch (error) {
+			setMessage({
+				...message,
+				errorMessage: error.message,
+				isError: true,
+			});
+		}
 	};
 
 	return (
@@ -116,7 +138,7 @@ export default function CustomToolbar({ selectionRecord, editRowData }) {
 				</Button>
 			)}
 
-			<AddNewBookDocDialog open={open} handleClose={handleClose} />
+			<BookDocDialog open={open} handleClose={handleClose} />
 			<ConditionalSnackbar />
 		</GridToolbarContainer>
 	);

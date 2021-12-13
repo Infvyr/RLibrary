@@ -31,3 +31,4 @@ export { default as ConditionalSnackbar } from './common/Toasts/ConditionalSnack
 // Application View
 export { default as AppBarView } from './Appbar/AppBarView';
 export { default as AppMainView } from './AppMainView/AppMainView';
+export { default as BookDocDialog } from './AppMainView/BookDocDialog';

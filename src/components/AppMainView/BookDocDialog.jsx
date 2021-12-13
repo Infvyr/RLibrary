@@ -30,7 +30,7 @@ const AddNewBookDocDialog = ({ open, handleClose }) => {
 		const newFields = {
 			name: removeExtraSpace(bookName),
 			author: removeExtraSpace(bookAuthor),
-			registration_date: Timestamp.fromDate(new Date(bookRegDate)),
+			registration_date: Timestamp.fromDate(bookRegDate),
 			price: parseFloat(bookPrice),
 		};
 
