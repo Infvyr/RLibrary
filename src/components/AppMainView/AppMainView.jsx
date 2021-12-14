@@ -4,12 +4,12 @@ import { COLUMNS } from './data/columns';
 
 import { Grid } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import CustomToolbar from './CustomToolbar';
+import { CustomToolbar } from '../';
 
 const AppMainView = () => {
 	const { books, setBooks } = useFirebaseCollection();
 	const [selectionRecord, setSelectionRecord] = useState([]);
-	const [pageSize, setPageSize] = useState(15);
+	const [pageSize, setPageSize] = useState(20);
 	const [editRowsModel, setEditRowsModel] = useState({});
 	const [editRowData, setEditRowData] = useState({});
 
@@ -41,7 +41,11 @@ const AppMainView = () => {
 						Toolbar: CustomToolbar,
 					}}
 					componentsProps={{
-						toolbar: { selectionRecord, editRowData, setBooks },
+						toolbar: {
+							selectionRecord,
+							editRowData,
+							setBooks,
+						},
 					}}
 					selectionModel={selectionRecord}
 					checkboxSelection
@@ -50,7 +54,7 @@ const AppMainView = () => {
 					onEditRowsModelChange={handleEditRowsModelChange}
 					pagination
 					{...books}
-					rowsPerPageOptions={[15, 30, 50, 75, 100]}
+					rowsPerPageOptions={[20, 40, 60, 80, 100]}
 					pageSize={pageSize}
 					onPageSizeChange={newPageSize => setPageSize(newPageSize)}
 					disableSelectionOnClick

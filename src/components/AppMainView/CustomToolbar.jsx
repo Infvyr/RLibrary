@@ -1,12 +1,6 @@
 import { useState } from 'react';
 import { db } from '../../firebase/utils';
-import {
-	writeBatch,
-	collection,
-	doc,
-	updateDoc,
-	Timestamp,
-} from 'firebase/firestore';
+import { writeBatch, doc, updateDoc } from 'firebase/firestore';
 import { useAuth } from '../../contexts/AuthContext';
 
 import {
@@ -24,11 +18,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 
-export default function CustomToolbar({
-	selectionRecord,
-	editRowData,
-	setBooks,
-}) {
+export default function CustomToolbar({ selectionRecord, editRowData }) {
 	const { message, setMessage } = useAuth();
 	const [open, setOpen] = useState(false);
 
@@ -102,8 +92,7 @@ export default function CustomToolbar({
 			<Box
 				sx={{
 					flex: '1',
-					order: '1',
-					textAlign: { xs: 'center', sm: 'right' },
+					textAlign: { xs: 'center', sm: 'left' },
 				}}>
 				<GridToolbarColumnsButton />
 				<GridToolbarFilterButton />
