@@ -62,9 +62,6 @@ const AppBarView = () => {
 						}}
 						open={Boolean(anchorEl)}
 						onClose={handleClose}>
-						<MenuItem disableRipple onClick={handleClose}>
-							Profile
-						</MenuItem>
 						<MenuItem disableRipple onClick={signout}>
 							Sign out
 						</MenuItem>

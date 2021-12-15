@@ -33,3 +33,4 @@ export { default as AppBarView } from './Appbar/AppBarView';
 export { default as AppMainView } from './AppMainView/AppMainView';
 export { default as BookDocDialog } from './AppMainView/BookDocDialog';
 export { default as CustomToolbar } from './AppMainView/CustomToolbar';
+export { default as Stats } from './Statistics/Stats';

@@ -10,14 +10,10 @@ const useFirebaseCollection = (collectionName = 'books') => {
 			query(collection(db, collectionName)),
 			querySnapshot => {
 				setBooks(
-					querySnapshot.docs.map(doc => {
-						// let date = doc.data().registration_date.toDate();
-						return {
-							id: doc.id,
-							// registration_date: date.toDateString(),
-							...doc.data(),
-						};
-					})
+					querySnapshot.docs.map(doc => ({
+						id: doc.id,
+						...doc.data(),
+					}))
 				);
 			}
 		);
