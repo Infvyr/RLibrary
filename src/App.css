@@ -10,9 +10,8 @@ body {
 		rgba(255, 255, 255, 0.09)
 	);
 }
-[data-theme='dark'] a,
-[data-theme='dark'] p,
-[data-theme='dark'] div {
+[data-theme='dark'] .MuiDataGrid-columnHeaderTitle,
+[data-theme='dark'] .MuiDataGrid-cell {
 	color: #fff;
 }
 
