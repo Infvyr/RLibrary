@@ -11,7 +11,8 @@ body {
 	);
 }
 [data-theme='dark'] .MuiDataGrid-columnHeaderTitle,
-[data-theme='dark'] .MuiDataGrid-cell {
+[data-theme='dark'] .MuiDataGrid-cell,
+[data-theme='dark'] .MuiDataGrid-selectedRowCount {
 	color: #fff;
 }
 
