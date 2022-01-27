@@ -36,5 +36,5 @@ a {
 }
 
 .Mui-required[data-shrink='true'] .MuiInputLabel-asterisk {
-	color: red;
+	color: #f44336;
 }

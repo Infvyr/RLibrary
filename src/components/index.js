@@ -34,3 +34,6 @@ export { default as AppMainView } from './AppMainView/AppMainView';
 export { default as BookDocDialog } from './AppMainView/BookDocDialog';
 export { default as CustomToolbar } from './AppMainView/CustomToolbar';
 export { default as Stats } from './Statistics/Stats';
+
+// helpers
+export { default as HelperError } from './HelperError/HelperError';

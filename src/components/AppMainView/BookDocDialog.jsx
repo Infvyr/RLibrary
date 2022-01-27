@@ -13,19 +13,33 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import enGb from 'date-fns/locale/en-GB';
-
-const removeExtraSpace = s => s.trim().split(/ +/).join(' ');
+import { removeExtraSpace } from '../../helpers/sanitization';
+import { HelperError } from '../';
 
 const AddNewBookDocDialog = ({ open, handleClose }) => {
 	const [bookName, setBookName] = useState('');
 	const [bookAuthor, setBookAuthor] = useState('');
 	const [bookRegDate, setBookRegDate] = useState(null);
 	const [bookPrice, setBookPrice] = useState('');
+	const [fieldsError, setFieldsError] = useState({
+		bookName: '',
+		bookAuthor: '',
+		bookRegDate: '',
+		bookPrice: '',
+	});
 
 	const handleAddRecord = async e => {
 		e.preventDefault();
 
-		if (!bookName || !bookAuthor || !bookRegDate || !bookPrice) return;
+		if (!bookName || !bookAuthor || !bookRegDate || !bookPrice) {
+			setFieldsError({
+				bookName: 'The book name should not be empty',
+				bookAuthor: 'The book author is required',
+				bookRegDate: 'Set a registration date',
+				bookPrice: "Enter the book's price",
+			});
+			return;
+		}
 
 		const newFields = {
 			name: removeExtraSpace(bookName),
@@ -41,6 +55,16 @@ const AddNewBookDocDialog = ({ open, handleClose }) => {
 		setBookRegDate(null);
 		setBookPrice('');
 		handleClose();
+	};
+
+	const handlePriceField = e => {
+		let input = e.target.value;
+		if (
+			!input ||
+			(input[input.length - 1].match('[0-9]') && input[0].match('[1-9]'))
+		) {
+			setBookPrice(input);
+		}
 	};
 
 	return (
@@ -59,6 +83,10 @@ const AddNewBookDocDialog = ({ open, handleClose }) => {
 					fullWidth
 					required
 				/>
+				{(!bookName || bookName === '') && (
+					<HelperError label={fieldsError.bookName} />
+				)}
+
 				<TextField
 					margin="dense"
 					id="author"
@@ -70,6 +98,10 @@ const AddNewBookDocDialog = ({ open, handleClose }) => {
 					required
 					sx={{ mt: '0' }}
 				/>
+				{(!bookAuthor || bookAuthor == '') && (
+					<HelperError label={fieldsError.bookAuthor} />
+				)}
+
 				<LocalizationProvider dateAdapter={AdapterDateFns} locale={enGb}>
 					<DatePicker
 						label="Registration date"
@@ -79,20 +111,27 @@ const AddNewBookDocDialog = ({ open, handleClose }) => {
 							<TextField {...params} fullWidth variant="standard" required />
 						)}
 					/>
+					{(!bookRegDate || bookRegDate === '') && (
+						<HelperError label={fieldsError.bookRegDate} />
+					)}
 				</LocalizationProvider>
+
 				<TextField
 					margin="dense"
 					id="price"
 					type="number"
 					label="Price"
 					variant="standard"
-					inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+					inputProps={{ min: 1, inputMode: 'numeric', pattern: '[0-9]*' }}
 					value={bookPrice}
-					onChange={e => setBookPrice(e.target.value)}
+					onChange={handlePriceField}
 					fullWidth
 					required
 					sx={{ mt: '0' }}
 				/>
+				{(!bookPrice || bookPrice === '') && (
+					<HelperError label={fieldsError.bookPrice} />
+				)}
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={handleClose}>Cancel</Button>
