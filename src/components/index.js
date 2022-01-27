@@ -36,4 +36,4 @@ export { default as CustomToolbar } from './AppMainView/CustomToolbar';
 export { default as Stats } from './Statistics/Stats';
 
 // helpers
-export { default as HelperError } from './HelperError/HelperError';
+export { default as ErrorMessage } from './ErrorMessage/ErrorMessage';
