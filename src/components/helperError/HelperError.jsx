@@ -1,4 +1,4 @@
-import classes from './helperError.module.css';
+import classes from './HelperError.module.css';
 
 const HelperError = ({ label }) => {
 	return <span className={classes.errorHelper}>{label}</span>;
