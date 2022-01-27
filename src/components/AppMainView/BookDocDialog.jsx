@@ -14,7 +14,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import enGb from 'date-fns/locale/en-GB';
 import { removeExtraSpace } from '../../helpers/sanitization';
-import { HelperError } from '../';
+import { ErrorMessage } from '../';
 
 const AddNewBookDocDialog = ({ open, handleClose }) => {
 	const [bookName, setBookName] = useState('');
@@ -84,7 +84,7 @@ const AddNewBookDocDialog = ({ open, handleClose }) => {
 					required
 				/>
 				{(!bookName || bookName === '') && (
-					<HelperError label={fieldsError.bookName} />
+					<ErrorMessage label={fieldsError.bookName} />
 				)}
 
 				<TextField
@@ -99,7 +99,7 @@ const AddNewBookDocDialog = ({ open, handleClose }) => {
 					sx={{ mt: '0' }}
 				/>
 				{(!bookAuthor || bookAuthor == '') && (
-					<HelperError label={fieldsError.bookAuthor} />
+					<ErrorMessage label={fieldsError.bookAuthor} />
 				)}
 
 				<LocalizationProvider dateAdapter={AdapterDateFns} locale={enGb}>
@@ -112,7 +112,7 @@ const AddNewBookDocDialog = ({ open, handleClose }) => {
 						)}
 					/>
 					{(!bookRegDate || bookRegDate === '') && (
-						<HelperError label={fieldsError.bookRegDate} />
+						<ErrorMessage label={fieldsError.bookRegDate} />
 					)}
 				</LocalizationProvider>
 
@@ -130,7 +130,7 @@ const AddNewBookDocDialog = ({ open, handleClose }) => {
 					sx={{ mt: '0' }}
 				/>
 				{(!bookPrice || bookPrice === '') && (
-					<HelperError label={fieldsError.bookPrice} />
+					<ErrorMessage label={fieldsError.bookPrice} />
 				)}
 			</DialogContent>
 			<DialogActions>
