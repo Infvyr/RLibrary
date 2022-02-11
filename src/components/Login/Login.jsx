@@ -59,6 +59,7 @@ const Login = () => {
 				<Link
 					href="#"
 					underline="none"
+					title="Click to copy email to clipboard"
 					onClick={() => copyToClipBoard(demoCredentials.email)}
 				>
 					{demoCredentials.email}
@@ -68,6 +69,7 @@ const Login = () => {
 				<Link
 					href="#"
 					underline="none"
+					title="Click to copy password to clipboard"
 					onClick={() => copyToClipBoard(demoCredentials.password)}
 				>
 					{demoCredentials.password}
