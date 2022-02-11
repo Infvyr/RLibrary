@@ -25,7 +25,7 @@ const LoginForm = () => {
 		mode: 'onBlur',
 	});
 
-	const { signInUser, setSignInError, message, setMessage } = useAuth();
+	const { signInUser, setError, message, setMessage } = useAuth();
 	const navigate = useNavigate();
 	const location = useLocation();
 
@@ -37,20 +37,20 @@ const LoginForm = () => {
 		} catch (error) {
 			switch (error.code) {
 				case 'auth/user-not-found':
-					setSignInError({
-						message: 'Please verify the correctness of your email address!',
+					setError({
+						message: 'Sorry, this email address does not exist!',
 						isActive: true,
 					});
 					break;
 				case 'auth/wrong-password':
-					setSignInError({
+					setError({
 						message: 'Please verify the correctness of your password!',
 						isActive: true,
 					});
 					break;
 
 				case 'auth/too-many-requests':
-					setSignInError({
+					setError({
 						message:
 							"We're sorry! Too many requests at time. Please try again later!",
 						isActive: true,
@@ -58,7 +58,7 @@ const LoginForm = () => {
 					break;
 
 				default:
-					setSignInError({
+					setError({
 						message: error.message,
 						isActive: true,
 					});
